@@ -12,6 +12,6 @@ namespace PersonalFinanceManager.Shared.Models
         public float Amount { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; }
+        public UserModel User { get; set; }
     }
 }
