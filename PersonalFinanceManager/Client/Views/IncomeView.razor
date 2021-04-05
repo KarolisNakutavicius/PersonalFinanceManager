@@ -1,0 +1,12 @@
+﻿@page "/Income"
+@inherits IncomeViewComponent
+
+<p>Total income this month : @ViewModel.CurrentAmount</p>
+
+<form @onsubmit="ViewModel.AddIncome"> 
+    <input type="number" @bind="ViewModel.ValueToAdd"/>
+    <input type="submit"/>
+</form>
+
+
+

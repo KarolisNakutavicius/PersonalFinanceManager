@@ -2,9 +2,9 @@
 using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Components.ViewModels;
 
-namespace PersonalFinanceManager.Client.Pages
+namespace PersonalFinanceManager.Client.Views
 {
-    public class ExpensesManagementComponent : ViewModelComponentBase<IncomeViewModel>
+    public class ExpensesViewComponent : ViewComponentBase<IncomeViewModel>
     {
         [Inject] public override IncomeViewModel ViewModel { get; set; }
     }

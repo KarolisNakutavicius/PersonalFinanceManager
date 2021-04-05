@@ -10,7 +10,7 @@ using PersonalFinanceManager.Shared.Models;
 
 namespace PersonalFinanceManager.Server.Controllers
 {
-    [Route("Users/{userID}/[controller]")]
+    [Route("Users/{userId}/[controller]")]
     [ApiController]
     public class IncomesController : ControllerBase
     {
@@ -76,12 +76,15 @@ namespace PersonalFinanceManager.Server.Controllers
         // POST: api/Incomes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<IncomeModel>> PostIncome(IncomeModel income)
+        public async Task<ActionResult<IncomeModel>> PostIncome(int userId, IncomeModel income)
         {
+            income.UserId = userId;
+
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetIncome", new { id = income.StatementId }, income);
+
+            return CreatedAtAction("GetIncome", new { userId = userId, id = income.StatementId }, income);
         }
 
         // DELETE: api/Incomes/5
