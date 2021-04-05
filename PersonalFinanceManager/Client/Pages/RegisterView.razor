@@ -1,0 +1,41 @@
+﻿@page "/register"
+@inherits RegisterViewComponent 
+
+<h1>Register</h1>
+
+@if (ViewModel.ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var error in ViewModel.Errors)
+        {
+            <p>@error</p>
+        }
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="ViewModel.RegisterModel" OnValidSubmit="ViewModel.HandleRegistration">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" class="form-control" @bind-Value="ViewModel.RegisterModel.Email" />
+                <ValidationMessage For="@(() => ViewModel.RegisterModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" class="form-control" @bind-Value="ViewModel.RegisterModel.Password" />
+                <ValidationMessage For="@(() => ViewModel.RegisterModel.Password)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Confirm Password</label>
+                <InputText Id="password" type="password" class="form-control" @bind-Value="ViewModel.RegisterModel.ConfirmPassword" />
+                <ValidationMessage For="@(() => ViewModel.RegisterModel.ConfirmPassword)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </div>
+</div>
