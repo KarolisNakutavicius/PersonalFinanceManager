@@ -21,14 +21,12 @@ namespace PersonalFinanceManager.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Incomes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes(int userId)
         {
             return await _context.Incomes.Where(i => i.UserId == userId).ToListAsync();
         }
 
-        // GET: api/Incomes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<IncomeModel>> GetIncome(int id)
         {
@@ -42,7 +40,6 @@ namespace PersonalFinanceManager.Server.Controllers
             return income;
         }
 
-        // PUT: api/Incomes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutIncome(int id, IncomeModel income)
@@ -73,7 +70,6 @@ namespace PersonalFinanceManager.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Incomes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<IncomeModel>> PostIncome(int userId, IncomeModel income)
@@ -83,15 +79,15 @@ namespace PersonalFinanceManager.Server.Controllers
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
 
-
             return CreatedAtAction("GetIncome", new { userId = userId, id = income.StatementId }, income);
         }
 
-        // DELETE: api/Incomes/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIncome(int id)
         {
             var income = await _context.Incomes.FindAsync(id);
+
             if (income == null)
             {
                 return NotFound();
