@@ -4,8 +4,8 @@ using PersonalFinanceManager.Components.ViewModels;
 
 namespace PersonalFinanceManager.Client.Views
 {
-    public class ExpensesViewComponent : ViewComponentBase<IncomeViewModel>
+    public class ExpensesViewComponent : ViewComponentBase<ExpensesViewModel>
     {
-        [Inject] public override IncomeViewModel ViewModel { get; set; }
+        [Inject] public override ExpensesViewModel ViewModel { get; set; }
     }
 }

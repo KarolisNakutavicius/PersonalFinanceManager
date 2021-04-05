@@ -53,6 +53,14 @@ namespace PersonalFinanceManager.Server.Contexts
                     UserId = 1,
                     Amount = 100,
                 });
+
+            modelBuilder.Entity<Expense>().HasData(
+                new Expense
+                {
+                    StatementId = 2,
+                    UserId = 1,
+                    Amount = 259,
+                });
         }
     }
 }

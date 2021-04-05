@@ -3,10 +3,9 @@
 
 <p>Total income this month : @ViewModel.CurrentAmount</p>
 
-<form @onsubmit="ViewModel.AddIncome"> 
-    <input type="number" @bind="ViewModel.ValueToAdd"/>
-    <input type="submit"/>
-</form>
+<input type="number" @bind="ViewModel.ValueToAdd" />
+
+<button class="btn btn-primary" @onclick="ViewModel.AddIncome">Add</button>
 
 
 

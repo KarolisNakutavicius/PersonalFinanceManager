@@ -1,16 +1,8 @@
 ﻿@page "/expenses"
+@inherits ExpensesViewComponent
 
-<h1>Counter</h1>
+<p>Total expenses this month : @ViewModel.CurrentAmount</p>
 
-<p>Current count: @currentCount</p>
+<input type="number" @bind="ViewModel.ValueToAdd" />
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}
+<button class="btn btn-primary" @onclick="ViewModel.AddExpense">Add</button>
