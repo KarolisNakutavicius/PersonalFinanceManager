@@ -30,7 +30,7 @@ namespace PersonalFinanceManager.Client.Services
 
         public async Task<RegisterResult> Register(RegisterModel registerModel)
         {
-            var result = await _httpClient.PostJsonAsync<RegisterResult>("accounts", registerModel);
+            var result = await _httpClient.PostJsonAsync<RegisterResult>("Users", registerModel);
 
             return result;
         }
