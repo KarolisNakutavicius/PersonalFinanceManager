@@ -1,0 +1,15 @@
+﻿@inject NavigationManager NavManager
+@inherits LayoutComponentBase
+
+@Body
+
+<a href="Register">Register</a>
+<a href="Login">Log in</a>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        NavManager.NavigateTo("/login");
+    }
+}
