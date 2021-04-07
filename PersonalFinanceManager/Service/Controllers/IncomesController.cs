@@ -12,6 +12,7 @@ using PersonalFinanceManager.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Principal;
 using System.Security.Authentication;
+using PersonalFinanceManager.Service.Helpers;
 
 namespace PersonalFinanceManager.Server.Controllers
 {
@@ -34,7 +35,7 @@ namespace PersonalFinanceManager.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes()
         {
-            return await _context.Incomes.Where(i => i.UserId == GetLoggedUserId()).ToListAsync();
+            return await _context.Incomes.Where(i => i.UserId == _currentIdentity.GetUserId()).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -84,7 +85,7 @@ namespace PersonalFinanceManager.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<IncomeModel>> PostIncome(IncomeModel income)
         {
-            income.UserId = GetLoggedUserId();
+            income.UserId = _currentIdentity.GetUserId();
 
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
@@ -112,16 +113,6 @@ namespace PersonalFinanceManager.Server.Controllers
         private bool IncomeExists(int id)
         {
             return _context.Incomes.Any(e => e.StatementId == id);
-        }
-
-        private string GetLoggedUserId()
-        {
-            if (!User.Identity.IsAuthenticated)
-                throw new AuthenticationException();
-
-            string userId = _currentIdentity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-            return userId;
         }
     }
 }

@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalFinanceManager.Server.Contexts;
+using PersonalFinanceManager.Service.Helpers;
 using PersonalFinanceManager.Shared.Models;
 
 namespace PersonalFinanceManager.Service.Controllers
 {
-    [Route("Users/{userId}/[controller]")]
+    [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class ExpensesController : ControllerBase
     {
         private readonly FinanceManagerContext _context;
+        private readonly ClaimsIdentity _currentIdentity;
 
-        public ExpensesController(FinanceManagerContext context)
+        public ExpensesController(FinanceManagerContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _currentIdentity = (ClaimsIdentity)httpContextAccessor.HttpContext.User.Identity;
         }
 
         // GET: api/Expenses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses(string userId)
+        public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses()
         {
-            return await _context.Expenses.Where(e => e.UserId.Equals(userId)).ToListAsync();
+            return await _context.Expenses.Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).ToListAsync();
         }
 
         // GET: api/Expenses/5
@@ -76,12 +83,14 @@ namespace PersonalFinanceManager.Service.Controllers
         // POST: api/Expenses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Expense>> PostExpense(int userId, Expense expense)
+        public async Task<ActionResult<Expense>> PostExpense(Expense expense)
         {
+            expense.UserId = _currentIdentity.GetUserId();
+
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetExpense", new { userId = userId, id = expense.StatementId }, expense);
+            return CreatedAtAction("GetExpense", new { id = expense.StatementId }, expense);
         }
 
         // DELETE: api/Expenses/5

@@ -61,7 +61,14 @@ namespace PersonalFinanceManager.Client.ViewModels
                 currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
             }
 
-            CurrentAmount = currentExpenses?.FirstOrDefault()?.Amount ?? 0;
+            float totalAmount = 0;
+
+            foreach (var income in currentExpenses)
+            {
+                totalAmount += income.Amount;
+            }
+
+            CurrentAmount = totalAmount;
         }
     }
 }

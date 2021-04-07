@@ -64,7 +64,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             float totalIncomes = 0;
 
-            foreach(var income in currentIncomes)
+            foreach (var income in currentIncomes)
             {
                 totalIncomes += income.Amount;
             }
