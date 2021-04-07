@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using PersonalFinanceManager.Server.Contexts;
 using PersonalFinanceManager.Shared.Models;
 using PersonalFinanceManager.Shared.Responses;
 using System;
@@ -20,12 +21,15 @@ namespace PersonalFinanceManager.Service.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly SignInManager<User> _signInManager;
+        private readonly FinanceManagerContext _financeManagerContext;
 
         public TokenController(IConfiguration configuration,
-                               SignInManager<User> signInManager)
+                               SignInManager<User> signInManager,
+                               FinanceManagerContext financeManagerContext)
         {
             _configuration = configuration;
             _signInManager = signInManager;
+            _financeManagerContext = financeManagerContext;
         }
 
         [HttpPost]
@@ -35,9 +39,13 @@ namespace PersonalFinanceManager.Service.Controllers
 
             if (!result.Succeeded) return BadRequest(new LoginResult { Successful = false, Error = "Username and password are invalid." });
 
+            var user = _financeManagerContext.Users.FirstOrDefault(u => u.Email == login.Email);
+
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, login.Email)
+                new Claim(ClaimTypes.Email, login.Email),
+                new Claim(ClaimTypes.Name, login.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));

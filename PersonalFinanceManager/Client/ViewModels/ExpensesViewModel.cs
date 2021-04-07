@@ -43,7 +43,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                var result = await _apiClient.PostAsJsonAsync("Users/1/Expenses", data, cts.Token);
+                var result = await _apiClient.PostAsJsonAsync("Expenses", data, cts.Token);
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -58,7 +58,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Users/1/Expenses", cts.Token);
+                currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
             }
 
             CurrentAmount = currentExpenses?.FirstOrDefault()?.Amount ?? 0;
