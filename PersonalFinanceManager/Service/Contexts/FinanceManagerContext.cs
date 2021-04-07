@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -7,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Server.Contexts
 {
-    public class FinanceManagerContext : DbContext
+    public class FinanceManagerContext : IdentityDbContext<User>
     {
-        public DbSet<User> Users { get; set; }
+        public override DbSet<User> Users { get; set; }
 
         public DbSet<Statement> Statements { get; set; }
 
@@ -19,11 +21,13 @@ namespace PersonalFinanceManager.Server.Contexts
 
         public FinanceManagerContext(DbContextOptions<FinanceManagerContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Statement>()
                 .HasDiscriminator<string>("statement_type")
                 .HasValue<IncomeModel>("income")
@@ -38,7 +42,7 @@ namespace PersonalFinanceManager.Server.Contexts
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    UserID = 1,
+                    Id = "uniqueId",
                     Email = "karolis.nakutavicius@stud.mif.vu.lt"
                 });
 
@@ -47,7 +51,7 @@ namespace PersonalFinanceManager.Server.Contexts
                 new IncomeModel
                 {
                     StatementId = 1,
-                    UserId = 1,
+                    UserId = "uniqueId",
                     Amount = 100,
                 });
         }
