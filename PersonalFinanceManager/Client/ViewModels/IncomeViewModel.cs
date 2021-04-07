@@ -28,7 +28,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             set { _valueToAdd = value; }
         }
 
-        public float CurrentAmount { get; set; }
+        public float TotalIncome { get; set; }
 
         public async Task OnInit()
             => await GetCurrentIncomes();
@@ -44,11 +44,11 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                var result = await _apiClient.PostAsJsonAsync("Users/1/Incomes", data, cts.Token);
+                var result = await _apiClient.PostAsJsonAsync("Incomes", data, cts.Token);
 
                 if (result.IsSuccessStatusCode)
                 {
-                    CurrentAmount += ValueToAdd;
+                    TotalIncome += ValueToAdd;
                 }
             }
         }
@@ -59,10 +59,17 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                currentIncomes = await _apiClient.GetFromJsonAsync<IEnumerable<IncomeModel>>("Users/1/Incomes", cts.Token);
+                currentIncomes = await _apiClient.GetFromJsonAsync<IEnumerable<IncomeModel>>("Incomes", cts.Token);
             }
 
-            CurrentAmount = currentIncomes?.FirstOrDefault()?.Amount ?? 0;
+            float totalIncomes = 0;
+
+            foreach (var income in currentIncomes)
+            {
+                totalIncomes += income.Amount;
+            }
+
+            TotalIncome = totalIncomes;
         }
     }
 }

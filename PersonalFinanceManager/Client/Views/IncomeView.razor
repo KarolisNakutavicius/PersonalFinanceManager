@@ -1,7 +1,8 @@
 ﻿@page "/Income"
+@attribute [Authorize]
 @inherits IncomeViewComponent
 
-<p>Total income this month : @ViewModel.CurrentAmount</p>
+<p>Total income this month : @ViewModel.TotalIncome</p>
 
 <input type="number" @bind="ViewModel.ValueToAdd" />
 

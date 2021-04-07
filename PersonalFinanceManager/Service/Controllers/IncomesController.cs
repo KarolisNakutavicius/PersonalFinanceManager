@@ -1,30 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PersonalFinanceManager.Server.Contexts;
 using PersonalFinanceManager.Shared.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Principal;
+using System.Security.Authentication;
+using PersonalFinanceManager.Service.Helpers;
 
 namespace PersonalFinanceManager.Server.Controllers
 {
-    [Route("Users/{userId}/[controller]")]
+    [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class IncomesController : ControllerBase
     {
         private readonly FinanceManagerContext _context;
+        private readonly ClaimsIdentity _currentIdentity;
 
-        public IncomesController(FinanceManagerContext context)
+        public IncomesController(FinanceManagerContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _currentIdentity = (ClaimsIdentity) httpContextAccessor.HttpContext.User.Identity;
         }
 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes(string userId)
+        public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes()
         {
-            return await _context.Incomes.Where(i => i.UserId == userId).ToListAsync();
+            return await _context.Incomes.Where(i => i.UserId == _currentIdentity.GetUserId()).ToListAsync();
         }
 
         [HttpGet("{id}")]
@@ -72,14 +83,14 @@ namespace PersonalFinanceManager.Server.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<IncomeModel>> PostIncome(string userId, IncomeModel income)
+        public async Task<ActionResult<IncomeModel>> PostIncome(IncomeModel income)
         {
-            income.UserId = userId;
+            income.UserId = _currentIdentity.GetUserId();
 
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetIncome", new { userId = userId, id = income.StatementId }, income);
+            return CreatedAtAction("GetIncome", new { id = income.StatementId }, income);
         }
 
 

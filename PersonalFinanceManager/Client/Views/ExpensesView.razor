@@ -1,4 +1,5 @@
 ﻿@page "/expenses"
+@attribute [Authorize]
 @inherits ExpensesViewComponent
 
 <p>Total expenses this month : @ViewModel.CurrentAmount</p>
