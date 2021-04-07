@@ -29,7 +29,7 @@ namespace PersonalFinanceManager.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RegisterModel model)
         {
-            var newUser = new User { UserName = model.Email, Email = model.Email };
+            var newUser = new User { UserName = model.Email, Email = model.Email, Id = 1 };
 
             var result = await _userManager.CreateAsync(newUser, model.Password);
 

@@ -31,6 +31,9 @@ namespace PersonalFinanceManager.Server
         {
             services.AddDbContext<FinanceManagerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDefaultIdentity<User>()
+                .AddEntityFrameworkStores<FinanceManagerContext>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

@@ -25,5 +25,9 @@
     <ProjectReference Include="..\Shared\PersonalFinanceManager.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
 
 </Project>
