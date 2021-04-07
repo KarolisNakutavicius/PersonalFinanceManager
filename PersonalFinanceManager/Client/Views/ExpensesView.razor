@@ -1,8 +1,0 @@
-﻿@page "/expenses"
-@inherits ExpensesViewComponent
-
-<p>Total expenses this month : @ViewModel.CurrentAmount</p>
-
-<input type="number" @bind="ViewModel.ValueToAdd" />
-
-<button class="btn btn-primary" @onclick="ViewModel.AddExpense">Add</button>

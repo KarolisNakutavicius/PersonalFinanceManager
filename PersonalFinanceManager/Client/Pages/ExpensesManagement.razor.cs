@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Components.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace PersonalFinanceManager.Client.Views
+namespace PersonalFinanceManager.Client.Pages
 {
-    public class IncomeViewComponent : ViewComponentBase<IncomeViewModel>
+    public class ExpensesManagementComponent : ViewModelComponentBase<IncomeViewModel>
     {
         [Inject] public override IncomeViewModel ViewModel { get; set; }
     }

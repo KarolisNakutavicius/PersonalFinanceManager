@@ -13,7 +13,6 @@ namespace PersonalFinanceManager.Client.Services
         public static void Build(this IServiceCollection services)
         {            
             services.AddScoped<IncomeViewModel>();
-            services.AddScoped<ExpensesViewModel>();
         }
     }
 }

@@ -24,9 +24,6 @@ namespace PersonalFinanceManager.Server.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().Property(ba => ba.UserID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Statement>().Property(ba => ba.StatementId).ValueGeneratedOnAdd();
-
             modelBuilder.Entity<Statement>()
                 .HasDiscriminator<string>("statement_type")
                 .HasValue<IncomeModel>("income")
@@ -52,14 +49,6 @@ namespace PersonalFinanceManager.Server.Contexts
                     StatementId = 1,
                     UserId = 1,
                     Amount = 100,
-                });
-
-            modelBuilder.Entity<Expense>().HasData(
-                new Expense
-                {
-                    StatementId = 2,
-                    UserId = 1,
-                    Amount = 259,
                 });
         }
     }
