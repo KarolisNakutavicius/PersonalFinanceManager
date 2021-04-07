@@ -22,7 +22,7 @@ namespace PersonalFinanceManager.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes(int userId)
+        public async Task<ActionResult<IEnumerable<IncomeModel>>> GetIncomes(string userId)
         {
             return await _context.Incomes.Where(i => i.UserId == userId).ToListAsync();
         }
@@ -72,7 +72,7 @@ namespace PersonalFinanceManager.Server.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<IncomeModel>> PostIncome(int userId, IncomeModel income)
+        public async Task<ActionResult<IncomeModel>> PostIncome(string userId, IncomeModel income)
         {
             income.UserId = userId;
 
