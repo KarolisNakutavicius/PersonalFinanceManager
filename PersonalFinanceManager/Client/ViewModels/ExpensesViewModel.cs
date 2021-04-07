@@ -4,7 +4,6 @@ using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
@@ -12,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Client.ViewModels
 {
-    public class IncomeViewModel : IViewModel
+    public class ExpensesViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
         private int _valueToAdd;
 
-        public IncomeViewModel(HttpClient apiClient)
+        public ExpensesViewModel (HttpClient apiClient)
         {
             _apiClient = apiClient;
         }
@@ -31,20 +30,20 @@ namespace PersonalFinanceManager.Client.ViewModels
         public float CurrentAmount { get; set; }
 
         public async Task OnInit()
-            => await GetCurrentIncomes();
+            => await GetCurrentExpenses();
 
-        public async Task AddIncome()
+        public async Task AddExpense()
         {
             if (ValueToAdd == 0)
             {
                 return;
             }
 
-            var data = new IncomeModel { Amount = ValueToAdd };
+            var data = new Expense { Amount = ValueToAdd };
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                var result = await _apiClient.PostAsJsonAsync("Users/1/Incomes", data, cts.Token);
+                var result = await _apiClient.PostAsJsonAsync("Users/1/Expenses", data, cts.Token);
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -53,16 +52,16 @@ namespace PersonalFinanceManager.Client.ViewModels
             }
         }
 
-        private async Task GetCurrentIncomes()
+        private async Task GetCurrentExpenses()
         {
-            IEnumerable<IncomeModel> currentIncomes;
+            IEnumerable<Expense> currentExpenses;
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
-                currentIncomes = await _apiClient.GetFromJsonAsync<IEnumerable<IncomeModel>>("Users/1/Incomes", cts.Token);
+                currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Users/1/Expenses", cts.Token);
             }
 
-            CurrentAmount = currentIncomes?.FirstOrDefault()?.Amount ?? 0;
+            CurrentAmount = currentExpenses?.FirstOrDefault()?.Amount ?? 0;
         }
     }
 }
