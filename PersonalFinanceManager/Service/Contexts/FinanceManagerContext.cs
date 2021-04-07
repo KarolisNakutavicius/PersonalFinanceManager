@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Server.Contexts
 {
-    public class FinanceManagerContext : IdentityDbContext<User, IdentityRole<int>, int>
+    public class FinanceManagerContext : IdentityDbContext<User>
     {
         public override DbSet<User> Users { get; set; }
 
@@ -42,7 +42,7 @@ namespace PersonalFinanceManager.Server.Contexts
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    Id = 1,
+                    Id = "uniqueId",
                     Email = "karolis.nakutavicius@stud.mif.vu.lt"
                 });
 
@@ -51,7 +51,7 @@ namespace PersonalFinanceManager.Server.Contexts
                 new IncomeModel
                 {
                     StatementId = 1,
-                    UserId = 1,
+                    UserId = "uniqueId",
                     Amount = 100,
                 });
         }

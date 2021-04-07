@@ -16,12 +16,12 @@ namespace PersonalFinanceManager.Service.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class TokenController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly SignInManager<User> _signInManager;
 
-        public LoginController(IConfiguration configuration,
+        public TokenController(IConfiguration configuration,
                                SignInManager<User> signInManager)
         {
             _configuration = configuration;
@@ -37,8 +37,8 @@ namespace PersonalFinanceManager.Service.Controllers
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, login.Email)
-        };
+                new Claim(ClaimTypes.Name, login.Email)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
