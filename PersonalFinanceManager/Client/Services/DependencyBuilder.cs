@@ -25,6 +25,7 @@ namespace PersonalFinanceManager.Client.Services
             services.AddScoped<IncomeViewModel>();
             services.AddScoped<LoginViewModel>();
             services.AddScoped<RegisterViewModel>();
+            services.AddScoped<ExpensesViewModel>();
         }
     }
 }

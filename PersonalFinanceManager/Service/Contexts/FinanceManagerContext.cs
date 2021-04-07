@@ -54,6 +54,14 @@ namespace PersonalFinanceManager.Server.Contexts
                     UserId = "uniqueId",
                     Amount = 100,
                 });
+
+            modelBuilder.Entity<Expense>().HasData(
+                new Expense
+                {
+                    StatementId = 2,
+                    UserId = "uniqueId",
+                    Amount = 259,
+                });
         }
     }
 }

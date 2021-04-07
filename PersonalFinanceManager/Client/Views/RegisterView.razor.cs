@@ -2,7 +2,7 @@
 using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Components.ViewModels;
 
-namespace PersonalFinanceManager.Client.Pages
+namespace PersonalFinanceManager.Client.Views
 {
     public class RegisterViewComponent : ViewComponentBase<RegisterViewModel>
     {

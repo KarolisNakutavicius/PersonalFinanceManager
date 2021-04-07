@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Components.ViewModels
 {
-    public abstract class ViewModelComponentBase<T> : ComponentBase where T : IViewModel
+    public abstract class ViewComponentBase<T> : ComponentBase where T : IViewModel
     {
         protected override async Task OnInitializedAsync()
         {
