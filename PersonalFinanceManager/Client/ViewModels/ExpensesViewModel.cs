@@ -1,4 +1,5 @@
-﻿using PersonalFinanceManager.Client.Contracts;
+﻿using Microsoft.JSInterop;
+using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
 using System;
@@ -14,11 +15,15 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class ExpensesViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
+        private readonly IJSRuntime _jsRuntime;
         private int _valueToAdd;
 
-        public ExpensesViewModel (HttpClient apiClient)
+        public IList<Expense> Expenses { get; set; }
+
+        public ExpensesViewModel (HttpClient apiClient, IJSRuntime jsRuntime)
         {
             _apiClient = apiClient;
+            _jsRuntime = jsRuntime;
         }
 
         public int ValueToAdd
@@ -30,7 +35,7 @@ namespace PersonalFinanceManager.Client.ViewModels
         public float CurrentAmount { get; set; }
 
         public async Task OnInit()
-            => await GetCurrentExpenses();
+            => _ = Task.Run(() => GetCurrentExpenses());
 
         public async Task AddExpense()
         {
@@ -56,19 +61,27 @@ namespace PersonalFinanceManager.Client.ViewModels
         {
             IEnumerable<Expense> currentExpenses;
 
-            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            Expenses = new List<Expense>
             {
-                currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
-            }
+                new Expense { Amount = 100, Category = "Other"},
+                new Expense { Amount = 150, Category = "Clothes"},
+                new Expense { Amount = 239, Category = "Other"}
+            };
 
-            float totalAmount = 0;
+            await _jsRuntime.InvokeVoidAsync("GeneratePieChart", Expenses);
+            //using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            //{
+            //    currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
+            //}
 
-            foreach (var income in currentExpenses)
-            {
-                totalAmount += income.Amount;
-            }
+            //float totalAmount = 0;
 
-            CurrentAmount = totalAmount;
+            //foreach (var income in currentExpenses)
+            //{
+            //    totalAmount += income.Amount;
+            //}
+
+            //CurrentAmount = totalAmount;
         }
     }
 }

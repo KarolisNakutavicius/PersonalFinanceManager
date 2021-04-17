@@ -2,33 +2,45 @@
 @inherits LoginViewComponent
 @layout LoginLayout
 
-<h1>Login</h1>
+<div class="container">
 
-@if (ViewModel.ShowErrors)
-{
-    <div class="alert alert-danger" role="alert">
-        <p>@ViewModel.Error</p>
+    <div class="card align-self-center mt-5 center">
+
+        <h1>Login</h1>
+
+        @if (ViewModel.ShowErrors)
+        {
+            <div class="alert alert-danger" role="alert">
+                <p>@ViewModel.Error</p>
+            </div>
+        }
+
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="ViewModel.LoginModel" OnValidSubmit="ViewModel.HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" Class="form-control" @bind-Value="ViewModel.LoginModel.Email" />
+                    <ValidationMessage For="@(() => ViewModel.LoginModel.Email)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" Class="form-control" @bind-Value="ViewModel.LoginModel.Password" />
+                    <ValidationMessage For="@(() => ViewModel.LoginModel.Password)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+        </div>
     </div>
-}
+    <div class="row mt-5 ml-3">
+        <p>
+            If don't have an account yet,
+            <br />
+            <a href="Register">Register</a>
+        </p>
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Please enter your details</h5>
-        <EditForm Model="ViewModel.LoginModel" OnValidSubmit="ViewModel.HandleLogin">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <InputText Id="email" Class="form-control" @bind-Value="ViewModel.LoginModel.Email" />
-                <ValidationMessage For="@(() => ViewModel.LoginModel.Email)" />
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <InputText Id="password" type="password" Class="form-control" @bind-Value="ViewModel.LoginModel.Password" />
-                <ValidationMessage For="@(() => ViewModel.LoginModel.Password)" />
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </EditForm>
     </div>
 </div>
