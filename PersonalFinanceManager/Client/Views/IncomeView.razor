@@ -1,12 +1,26 @@
 ﻿@page "/Income"
 @attribute [Authorize]
 @inherits IncomeViewComponent
+@using ChartJs.Blazor;
 
-<p>Total income this month : @ViewModel.TotalIncome</p>
+<p>Total income this month : @ViewModel.CurrentAmount</p>
 
 <input type="number" @bind="ViewModel.ValueToAdd" />
 
-<button class="btn btn-primary" @onclick="ViewModel.AddIncome">Add</button>
+<button class="btn btn-primary" @onclick="ViewModel.Add">Add</button>
+
+<EditForm Model="ViewModel">
+    <div>
+        <div>From :</div>
+        <InputDate type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
+    </div>
+    <div>
+        <div>To :</div>
+        <InputDate type="date" @bind-Value="ViewModel.DateTo"></InputDate>
+    </div>
+</EditForm>
+
+<Chart Config="ViewModel.Config"></Chart>
 
 
 
