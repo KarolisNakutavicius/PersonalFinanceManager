@@ -41,7 +41,7 @@ namespace PersonalFinanceManager.Server.Contexts
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.Statement)
                 .WithOne(s => s.Category)
-                .HasForeignKey(nameof(Statement.StatementId));
+                .HasForeignKey<Statement>(s => s.StatementId);
         }
     }
 }

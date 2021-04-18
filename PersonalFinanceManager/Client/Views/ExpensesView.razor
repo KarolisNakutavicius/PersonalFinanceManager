@@ -2,12 +2,11 @@
 @attribute [Authorize]
 @inherits ExpensesViewComponent
 @using ChartJs.Blazor;
+@using PersonalFinanceManager.Client.Components;
 
 <p>Total expenses this month : @ViewModel.CurrentAmount</p>
 
-<input type="number" @bind="ViewModel.ValueToAdd" />
-
-<button class="btn btn-primary" @onclick="ViewModel.Add">Add</button>
+<button class="plus-button" @onclick="() => Modal.Open()"></button>
 
 <EditForm Model="ViewModel">
     <div>
@@ -21,3 +20,9 @@
 </EditForm>
 
 <Chart Config="ViewModel.Config"></Chart>
+
+<AddModal @ref="Modal"></AddModal>
+
+@code {
+    private AddModal Modal { get; set; }
+}

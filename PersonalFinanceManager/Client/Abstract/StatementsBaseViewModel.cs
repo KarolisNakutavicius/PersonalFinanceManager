@@ -1,14 +1,10 @@
-﻿using ChartJs.Blazor;
-using ChartJs.Blazor.Common;
+﻿using ChartJs.Blazor.Common;
 using ChartJs.Blazor.PieChart;
-using ChartJs.Blazor.Util;
-using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
