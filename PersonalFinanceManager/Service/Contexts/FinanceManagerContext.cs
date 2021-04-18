@@ -21,7 +21,6 @@ namespace PersonalFinanceManager.Server.Contexts
 
         public FinanceManagerContext(DbContextOptions<FinanceManagerContext> options) : base(options)
         {
-            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,29 +38,10 @@ namespace PersonalFinanceManager.Server.Contexts
                 .WithMany(u => u.Statements)
                 .HasForeignKey(s => s.UserId);
 
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = "uniqueId",
-                    Email = "karolis.nakutavicius@stud.mif.vu.lt"
-                });
-
-
-            modelBuilder.Entity<IncomeModel>().HasData(
-                new IncomeModel
-                {
-                    StatementId = 1,
-                    UserId = "uniqueId",
-                    Amount = 100,
-                });
-
-            modelBuilder.Entity<Expense>().HasData(
-                new Expense
-                {
-                    StatementId = 2,
-                    UserId = "uniqueId",
-                    Amount = 259,
-                });
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.Statement)
+                .WithOne(s => s.Category)
+                .HasForeignKey(nameof(Statement.StatementId));
         }
     }
 }

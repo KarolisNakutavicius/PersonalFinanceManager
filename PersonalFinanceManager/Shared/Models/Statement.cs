@@ -10,10 +10,9 @@ namespace PersonalFinanceManager.Shared.Models
     {
         public int StatementId { get; set; }
         public float Amount { get; set; }
+        public Category Category { get; set; }
 
         public string UserId { get; set; }
         public User User { get; set; }
-
-        public string Category { get; set; }
     }
 }

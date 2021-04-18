@@ -77,10 +77,10 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             Expenses =  new List<Expense>
             {
-                new Expense { Amount = 200, Category = "Other" },
-                new Expense { Amount = 260, Category = "Other" },
-                new Expense { Amount = 200, Category = "Shopping" },
-                new Expense { Amount = 20, Category = "Gym" }
+                new Expense { Amount = 200, Category = new Category { Name = "Other", ColorHex = "#a10ef1" } },
+                new Expense { Amount = 260, Category = new Category { Name = "Clothes", ColorHex = "#ceff00" } },
+                new Expense { Amount = 200, Category = new Category { Name = "Other", ColorHex = "#a10ef1" } },
+                new Expense { Amount = 20, Category = new Category { Name = "Gym", ColorHex = "#0041ff" } }
             };
 
         }
@@ -107,13 +107,13 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             foreach (var expense in Expenses)
             {
-                var category = expense.Category;
+                var category = expense.Category.Name;
 
                 if (!Config.Data.Labels.Contains(category))
                 {
                     Config.Data.Labels.Add(category);
                     dataset.Add(expense.Amount);
-                    colors.Add(ColorUtil.ColorHexString((byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256)));
+                    colors.Add(expense.Category.ColorHex);
                 }
 
                 int indexOfLabel = Config.Data.Labels.IndexOf(category);
