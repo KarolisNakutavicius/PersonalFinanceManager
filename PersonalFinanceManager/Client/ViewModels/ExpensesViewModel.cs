@@ -20,24 +20,20 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class ExpensesViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
-        private int _valueToAdd;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
+        private IList<Expense> _expenses;
 
         public ExpensesViewModel(HttpClient apiClient)
         {
             _apiClient = apiClient;
         }
 
-        public int ValueToAdd
-        {
-            get { return _valueToAdd; }
-            set { _valueToAdd = value; }
-        }
+        public int ValueToAdd;
 
         public DateTime DateFrom
         {
-            get { return _dateFrom ?? DateTime.Now.AddMonths(-1); }
+            get => _dateFrom ?? DateTime.Now.AddMonths(-1);
             set
             {
                 _dateFrom = value;
@@ -47,7 +43,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public DateTime DateTo
         {
-            get { return _dateTo ?? DateTime.Now; }
+            get => _dateTo ?? DateTime.Now;
             set
             {
                 _dateTo = value;
@@ -56,13 +52,20 @@ namespace PersonalFinanceManager.Client.ViewModels
         }
 
 
-        public float CurrentAmount { get; set; }
+        public float CurrentAmount => _expenses.Sum(e => e.Amount);
 
-        public PieConfig Config;
-
-        public Chart Chart { get;set; }
-
-        private IEnumerable<Expense> Expenses { get; set; }
+        public PieConfig Config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Your expenses"
+                }
+            }
+        };
 
         public async Task AddExpense()
         {
@@ -79,7 +82,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
                 if (result.IsSuccessStatusCode)
                 {
-                    CurrentAmount += ValueToAdd;
+                    _expenses.Add(data);
                 }
             }
         }
@@ -88,9 +91,9 @@ namespace PersonalFinanceManager.Client.ViewModels
         {
             await GetExpenses();
 
-            if (Expenses != null)
+            if (_expenses != null)
             {
-                await GeneratePie();
+                GeneratePie();
             }
         }
 
@@ -102,7 +105,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             //    Expenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
             //}
 
-            Expenses = new List<Expense>
+            _expenses = new List<Expense>
             {
                 new Expense {
                     Amount = 200,
@@ -125,25 +128,14 @@ namespace PersonalFinanceManager.Client.ViewModels
                     DateTime = DateTime.Now.AddMonths(-2)
                 }
             };
-
         }
 
-        public async Task GeneratePie()
+        public void GeneratePie()
         {
-            Config = new PieConfig
-            {
-                Options = new PieOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Your expenses"
-                    }
-                }
-            };
+            Config.Data.Labels.Clear();
+            Config.Data.Datasets.Clear();
 
-            IList<Expense> expensesInCurrentDateTime = Expenses.Where(e => e.DateTime > DateFrom && e.DateTime < DateTo).ToList();
+            IList<Expense> expensesInCurrentDateTime = _expenses.Where(e => e.DateTime > DateFrom && e.DateTime < DateTo).ToList();
             PieDataset<float> dataset = new PieDataset<float>();
             Random rnd = new Random();
             IList<string> colors = new List<string>();
@@ -167,8 +159,6 @@ namespace PersonalFinanceManager.Client.ViewModels
             dataset.BackgroundColor = colors.ToArray();
 
             Config.Data.Datasets.Add(dataset);
-
-            await Chart.Update();
         }
     }
 }
