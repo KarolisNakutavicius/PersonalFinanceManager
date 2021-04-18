@@ -9,6 +9,17 @@
 
 <button class="btn btn-primary" @onclick="ViewModel.AddExpense">Add</button>
 
-<Chart Config="ViewModel.Config"></Chart>
+<EditForm Model="ViewModel">
+    <div>
+        <div>From :</div>
+        <InputDate type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
+    </div>
+    <div>
+        <div>To :</div>
+        <InputDate type="date" @bind-Value="ViewModel.DateTo"></InputDate>
+    </div>
+</EditForm>
+
+<Chart Config="ViewModel.Config" @ref="ViewModel.Chart"></Chart>
 
 

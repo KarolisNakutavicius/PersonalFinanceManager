@@ -1,6 +1,8 @@
-﻿using ChartJs.Blazor.Common;
+﻿using ChartJs.Blazor;
+using ChartJs.Blazor.Common;
 using ChartJs.Blazor.PieChart;
 using ChartJs.Blazor.Util;
+using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
@@ -19,8 +21,10 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
         private int _valueToAdd;
+        private DateTime? _dateFrom;
+        private DateTime? _dateTo;
 
-        public ExpensesViewModel (HttpClient apiClient)
+        public ExpensesViewModel(HttpClient apiClient)
         {
             _apiClient = apiClient;
         }
@@ -31,9 +35,32 @@ namespace PersonalFinanceManager.Client.ViewModels
             set { _valueToAdd = value; }
         }
 
+        public DateTime DateFrom
+        {
+            get { return _dateFrom ?? DateTime.Now.AddMonths(-1); }
+            set
+            {
+                _dateFrom = value;
+                GeneratePie();
+            }
+        }
+
+        public DateTime DateTo
+        {
+            get { return _dateTo ?? DateTime.Now; }
+            set
+            {
+                _dateTo = value;
+                GeneratePie();
+            }
+        }
+
+
         public float CurrentAmount { get; set; }
 
         public PieConfig Config;
+
+        public Chart Chart { get;set; }
 
         private IEnumerable<Expense> Expenses { get; set; }
 
@@ -75,19 +102,35 @@ namespace PersonalFinanceManager.Client.ViewModels
             //    Expenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
             //}
 
-            Expenses =  new List<Expense>
+            Expenses = new List<Expense>
             {
-                new Expense { Amount = 200, Category = new Category { Name = "Other", ColorHex = "#a10ef1" } },
-                new Expense { Amount = 260, Category = new Category { Name = "Clothes", ColorHex = "#ceff00" } },
-                new Expense { Amount = 200, Category = new Category { Name = "Other", ColorHex = "#a10ef1" } },
-                new Expense { Amount = 20, Category = new Category { Name = "Gym", ColorHex = "#0041ff" } }
+                new Expense {
+                    Amount = 200,
+                    Category = new Category { Name = "Other", ColorHex = "#a10ef1" },
+                    DateTime = DateTime.Now.AddDays(-3)
+                },
+                new Expense {
+                    Amount = 260,
+                    Category = new Category { Name = "Clothes", ColorHex = "#ceff00" },
+                    DateTime = DateTime.Now.AddDays(-3)
+                },
+                new Expense {
+                    Amount = 200,
+                    Category = new Category { Name = "Other", ColorHex = "#a10ef1" },
+                    DateTime = DateTime.Now.AddMonths(-2)
+                },
+                new Expense {
+                    Amount = 20,
+                    Category = new Category { Name = "Gym", ColorHex = "#0041ff" },
+                    DateTime = DateTime.Now.AddMonths(-2)
+                }
             };
 
         }
 
-        private async Task GeneratePie()
+        public async Task GeneratePie()
         {
-           Config = new PieConfig
+            Config = new PieConfig
             {
                 Options = new PieOptions
                 {
@@ -100,12 +143,12 @@ namespace PersonalFinanceManager.Client.ViewModels
                 }
             };
 
+            IList<Expense> expensesInCurrentDateTime = Expenses.Where(e => e.DateTime > DateFrom && e.DateTime < DateTo).ToList();
             PieDataset<float> dataset = new PieDataset<float>();
-
             Random rnd = new Random();
             IList<string> colors = new List<string>();
 
-            foreach (var expense in Expenses)
+            foreach (var expense in expensesInCurrentDateTime)
             {
                 var category = expense.Category.Name;
 
@@ -124,6 +167,8 @@ namespace PersonalFinanceManager.Client.ViewModels
             dataset.BackgroundColor = colors.ToArray();
 
             Config.Data.Datasets.Add(dataset);
+
+            await Chart.Update();
         }
     }
 }
