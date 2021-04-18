@@ -1,5 +1,6 @@
 ﻿using ChartJs.Blazor.Common;
 using ChartJs.Blazor.PieChart;
+using PersonalFinanceManager.Client.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
@@ -47,6 +48,8 @@ namespace PersonalFinanceManager.Client.Abstract
             }
         }
 
+        public AddModal AddModal { get; set; }
+
         public float CurrentAmount => _statements.Sum(e => e.Amount);
 
         public abstract bool IsExpensePage { get; }
@@ -55,6 +58,9 @@ namespace PersonalFinanceManager.Client.Abstract
 
         public async Task Add()
         {
+            AddModal.Open();
+            return;
+
             if (ValueToAdd == 0)
             {
                 return;

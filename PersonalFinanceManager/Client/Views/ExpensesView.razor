@@ -4,25 +4,29 @@
 @using ChartJs.Blazor;
 @using PersonalFinanceManager.Client.Components;
 
-<p>Total expenses this month : @ViewModel.CurrentAmount</p>
 
-<button class="plus-button" @onclick="() => Modal.Open()"></button>
-
-<EditForm Model="ViewModel">
-    <div>
-        <div>From :</div>
-        <InputDate type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
+<div class="container">
+    <div class="row justify-content-center">
+        <h5>Total expenses this month : @ViewModel.CurrentAmount</h5>
     </div>
-    <div>
-        <div>To :</div>
-        <InputDate type="date" @bind-Value="ViewModel.DateTo"></InputDate>
+
+    <EditForm Model="ViewModel">
+        <div class="row mt-3">
+            <div class="col-lg-1 col-3">From :</div>
+            <InputDate class="col-xl-2 col-md-3 col-6" type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
+        </div>
+        <div class="row">
+            <div class="col-lg-1 col-3">To :</div>
+            <InputDate class="col-xl-2 col-md-3 col-6" type="date" @bind-Value="ViewModel.DateTo"></InputDate>
+        </div>
+    </EditForm>
+
+
+    <div class="row mt-3">
+        <Chart Config="ViewModel.Config"></Chart>
     </div>
-</EditForm>
 
-<Chart Config="ViewModel.Config"></Chart>
+</div>
 
-<AddModal @ref="Modal"></AddModal>
-
-@code {
-    private AddModal Modal { get; set; }
-}
+<AddModal Statement="StatementType.Expense" @ref="ViewModel.AddModal"></AddModal>
+<button class="plus-button" @onclick="ViewModel.Add"></button>

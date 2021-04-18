@@ -82,3 +82,7 @@ a, .btn-link {
         width: 1em;
     }
 
+.row {
+    height: 30px;
+    margin-bottom: 14px;
+}
