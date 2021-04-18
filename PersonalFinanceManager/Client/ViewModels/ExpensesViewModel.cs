@@ -1,8 +1,12 @@
-﻿using PersonalFinanceManager.Client.Contracts;
+﻿using ChartJs.Blazor.Common;
+using ChartJs.Blazor.PieChart;
+using ChartJs.Blazor.Util;
+using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -29,8 +33,9 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public float CurrentAmount { get; set; }
 
-        public async Task OnInit()
-            => await GetCurrentExpenses();
+        public PieConfig Config;
+
+        private IEnumerable<Expense> Expenses { get; set; }
 
         public async Task AddExpense()
         {
@@ -52,23 +57,73 @@ namespace PersonalFinanceManager.Client.ViewModels
             }
         }
 
-        private async Task GetCurrentExpenses()
+        public async Task OnInit()
         {
-            IEnumerable<Expense> currentExpenses;
+            await GetExpenses();
 
-            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            if (Expenses != null)
             {
-                currentExpenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
+                await GeneratePie();
+            }
+        }
+
+
+        private async Task GetExpenses()
+        {
+            //using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            //{
+            //    Expenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
+            //}
+
+            Expenses =  new List<Expense>
+            {
+                new Expense { Amount = 200, Category = "Other" },
+                new Expense { Amount = 260, Category = "Other" },
+                new Expense { Amount = 200, Category = "Shopping" },
+                new Expense { Amount = 20, Category = "Gym" }
+            };
+
+        }
+
+        private async Task GeneratePie()
+        {
+           Config = new PieConfig
+            {
+                Options = new PieOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "Your expenses"
+                    }
+                }
+            };
+
+            PieDataset<float> dataset = new PieDataset<float>();
+
+            Random rnd = new Random();
+            IList<string> colors = new List<string>();
+
+            foreach (var expense in Expenses)
+            {
+                var category = expense.Category;
+
+                if (!Config.Data.Labels.Contains(category))
+                {
+                    Config.Data.Labels.Add(category);
+                    dataset.Add(expense.Amount);
+                    colors.Add(ColorUtil.ColorHexString((byte)rnd.Next(256), (byte)rnd.Next(256), (byte)rnd.Next(256)));
+                }
+
+                int indexOfLabel = Config.Data.Labels.IndexOf(category);
+
+                dataset[indexOfLabel] += expense.Amount;
             }
 
-            float totalAmount = 0;
+            dataset.BackgroundColor = colors.ToArray();
 
-            foreach (var income in currentExpenses)
-            {
-                totalAmount += income.Amount;
-            }
-
-            CurrentAmount = totalAmount;
+            Config.Data.Datasets.Add(dataset);
         }
     }
 }
