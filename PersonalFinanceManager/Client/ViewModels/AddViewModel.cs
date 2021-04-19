@@ -2,6 +2,7 @@
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,21 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class AddViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
+        private readonly CategoryManager _categoryManager;
         private string _newCategory;
+        private StatementType _type;
 
         [Required]
-        public StatementType StatementType { get; set; }
+        public StatementType StatementType
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                Categories = _categoryManager.GetCategories(_type);
+            }
+        }
+
 
         [Required]
         public float Value { get; set; }
@@ -55,10 +67,10 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public IList<Category> Categories { get; set; } = new List<Category>();
 
-        public AddViewModel(HttpClient apiClient)
+        public AddViewModel(HttpClient apiClient, CategoryManager categoryManager)
         {
             _apiClient = apiClient;
-            _ = Task.Run(() => GetCategories());
+            _categoryManager = categoryManager;
         }
 
         public async Task OnInit()
@@ -93,13 +105,9 @@ namespace PersonalFinanceManager.Client.ViewModels
             StatementType = type;            
             Date = DateTime.Now;
             NewColorHex = "#CD32C8";
-            this.OpenRequested?.Invoke(this, EventArgs.Empty);
-        }
-
-        private async Task GetCategories()
-        {
-            Categories = await _apiClient.GetFromJsonAsync<List<Category>>($"{StatementType.GetDescription()}/Categories");
+            Categories = _categoryManager.GetCategories(type);
             OnSelectionChanged();
+            this.OpenRequested?.Invoke(this, EventArgs.Empty);
         }
 
         public void OnSelectionChanged()

@@ -22,6 +22,7 @@ namespace PersonalFinanceManager.Client.Services
             services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             services.AddScoped<IAuthService, AuthService>();
 
+            services.AddScoped<CategoryManager>();
             services.AddScoped<IncomeViewModel>();
             services.AddScoped<LoginViewModel>();
             services.AddScoped<RegisterViewModel>();

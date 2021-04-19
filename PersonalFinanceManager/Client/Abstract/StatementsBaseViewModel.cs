@@ -4,6 +4,7 @@ using PersonalFinanceManager.Client.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Shared.Models;
 using System;
@@ -18,19 +19,21 @@ namespace PersonalFinanceManager.Client.Abstract
 {
     public abstract class StatementsBaseViewModel : IViewModel
     {
-        private readonly HttpClient _apiClient;
         private readonly AddViewModel _addViewModel;
+        private readonly CategoryManager _categoryManager;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
-        private IList<Statement> _statements;
+        private IList<Category> _categories;
 
-        public StatementsBaseViewModel(HttpClient apiClient, AddViewModel addViewModel)
+        public StatementsBaseViewModel(AddViewModel addViewModel, CategoryManager categoryManager)
         {
-            _apiClient = apiClient;
             _addViewModel = addViewModel;
+            _categoryManager = categoryManager;
         }
 
-        public int ValueToAdd;
+        public int ValueToAdd { get; set; }
+
+        public IList<Category> SortedCategories { get; set; } = new List<Category>();
 
         public DateTime DateFrom
         {
@@ -54,7 +57,7 @@ namespace PersonalFinanceManager.Client.Abstract
 
         public AddModal AddModal { get; set; }
 
-        public float CurrentAmount => _statements.Sum(e => e.Amount);
+        public float CurrentAmount => SortedCategories.Sum(c=> c.Statements.Where(s => s.DateTime < DateTo && s.DateTime > DateFrom).Sum(c => c.Amount));
 
         public abstract StatementType Type { get; }
 
@@ -81,45 +84,13 @@ namespace PersonalFinanceManager.Client.Abstract
                     }
                 }
             };
-            await GetStatements();
 
-            if (_statements != null)
+            _categories = _categoryManager.GetCategories(Type);
+
+            if (_categories != null)
             {
                 GeneratePie();
             }
-        }
-
-
-        private async Task GetStatements()
-        {
-            //using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
-            //{
-            //    Expenses = await _apiClient.GetFromJsonAsync<IEnumerable<Expense>>("Expenses", cts.Token);
-            //}
-
-            _statements = new List<Statement>
-            {
-                new Expense {
-                    Amount = 200,
-                    Category = new Category { Name = "Other", ColorHex = "#a10ef1" },
-                    DateTime = DateTime.Now.AddDays(-3)
-                },
-                new Expense {
-                    Amount = 260,
-                    Category = new Category { Name = "Clothes", ColorHex = "#ceff00" },
-                    DateTime = DateTime.Now.AddDays(-3)
-                },
-                new Expense {
-                    Amount = 200,
-                    Category = new Category { Name = "Other", ColorHex = "#a10ef1" },
-                    DateTime = DateTime.Now.AddMonths(-2)
-                },
-                new Expense {
-                    Amount = 20,
-                    Category = new Category { Name = "Gym", ColorHex = "#0041ff" },
-                    DateTime = DateTime.Now.AddMonths(-2)
-                }
-            };
         }
 
         public void GeneratePie()
@@ -127,30 +98,27 @@ namespace PersonalFinanceManager.Client.Abstract
             Config.Data.Labels.Clear();
             Config.Data.Datasets.Clear();
 
-            IList<Statement> statementsInTime = _statements.Where(e => e.DateTime > DateFrom && e.DateTime < DateTo).ToList();
             PieDataset<float> dataset = new PieDataset<float>();
-            Random rnd = new Random();
             IList<string> colors = new List<string>();
 
-            foreach (var expense in statementsInTime)
+            var sortedCategories = _categories.Where(c => c.Statements?.Any(s => s.DateTime < DateFrom && s.DateTime > DateTo) ?? false).ToList();
+
+            if (sortedCategories == null || sortedCategories.Count == 0)
             {
-                var category = expense.Category.Name;
+                return;
+            }
 
-                if (!Config.Data.Labels.Contains(category))
-                {
-                    Config.Data.Labels.Add(category);
-                    dataset.Add(expense.Amount);
-                    colors.Add(expense.Category.ColorHex);
-                    continue;
-                }
+            SortedCategories = sortedCategories;
 
-                int indexOfLabel = Config.Data.Labels.IndexOf(category);
-
-                dataset[indexOfLabel] += expense.Amount;
+            foreach (var category in SortedCategories)
+            {
+                Config.Data.Labels.Add(category.Name);                
+                float totalAmount = category.Statements.Where((s => s.DateTime < DateTo && s.DateTime > DateFrom)).Sum(s => s.Amount);
+                dataset.Add(totalAmount);
+                colors.Add(category.ColorHex);
             }
 
             dataset.BackgroundColor = colors.ToArray();
-
             Config.Data.Datasets.Add(dataset);
         }
     }

@@ -2,6 +2,7 @@
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,10 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Client.ViewModels
 {
-    public class IncomeViewModel :StatementsBaseViewModel
+    public class IncomeViewModel : StatementsBaseViewModel
     {
         public override StatementType Type => StatementType.Income;
-        public IncomeViewModel(HttpClient apiClient, AddViewModel addViewModel) : base(apiClient, addViewModel)
+        public IncomeViewModel(AddViewModel addViewModel, CategoryManager categoryManager) : base(addViewModel, categoryManager)
         {
         }
     }

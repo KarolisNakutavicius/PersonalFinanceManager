@@ -7,6 +7,7 @@ using PersonalFinanceManager.Client.Abstract;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         public override StatementType Type => StatementType.Expense;
 
-        public ExpensesViewModel(HttpClient httpClient, AddViewModel addViewModel) : base(httpClient, addViewModel)
+        public ExpensesViewModel(CategoryManager categoryManager, AddViewModel addViewModel) : base(addViewModel, categoryManager)
         {
         }
     }
