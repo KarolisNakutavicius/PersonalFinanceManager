@@ -34,6 +34,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public event EventHandler OnAddSuccess;
 
+        public event EventHandler OpenRequested;
+
         public AddViewModel(HttpClient apiClient)
         {
             _apiClient = apiClient;    
@@ -66,6 +68,14 @@ namespace PersonalFinanceManager.Client.ViewModels
                     this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
                 }
             }            
+        }
+
+        public void Open(StatementType type)
+        {
+            StatementType = type;            
+            Date = DateTime.Now;
+            NewColorHex = "#CD32C8";
+            this.OpenRequested?.Invoke(this, EventArgs.Empty);
         }
 
     }

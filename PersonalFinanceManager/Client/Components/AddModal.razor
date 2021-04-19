@@ -66,15 +66,10 @@
 
 @code {
 
-    [Parameter]
-    public StatementType Statement { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
-        ViewModel.StatementType = Statement;
-        ViewModel.Date = DateTime.Now;
-        ViewModel.NewColorHex = "#CD32C8";
         ViewModel.OnAddSuccess += (s, e) => Close();
+        ViewModel.OpenRequested += (s, e) => Open();
     }
 
     public string ModalDisplay = "none;";

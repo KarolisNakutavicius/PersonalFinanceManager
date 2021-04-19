@@ -1,5 +1,6 @@
 ﻿using PersonalFinanceManager.Client.Abstract;
 using PersonalFinanceManager.Client.Contracts;
+using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Shared.Models;
 using System;
@@ -15,8 +16,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 {
     public class IncomeViewModel :StatementsBaseViewModel
     {
-        public override bool IsExpensePage => false;
-        public IncomeViewModel(HttpClient apiClient) : base(apiClient)
+        public override StatementType Type => StatementType.Income;
+        public IncomeViewModel(HttpClient apiClient, AddViewModel addViewModel) : base(apiClient, addViewModel)
         {
         }
     }

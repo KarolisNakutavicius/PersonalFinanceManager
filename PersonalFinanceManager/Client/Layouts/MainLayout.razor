@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using PersonalFinanceManager.Client.Components;
 
 <AuthorizeView>
     <Authorized>
@@ -14,12 +15,13 @@
 
                 <div class="content px-4">
                     @Body
+                    <AddModal></AddModal>
                 </div>
             </div>
         </div>
     </Authorized>
     <NotAuthorized>
-        <LoginLayout/>
+        <LoginLayout />
     </NotAuthorized>
 </AuthorizeView>
 

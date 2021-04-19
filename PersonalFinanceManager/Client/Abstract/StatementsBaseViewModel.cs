@@ -2,7 +2,9 @@
 using ChartJs.Blazor.PieChart;
 using PersonalFinanceManager.Client.Components;
 using PersonalFinanceManager.Client.Contracts;
+using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -17,13 +19,15 @@ namespace PersonalFinanceManager.Client.Abstract
     public abstract class StatementsBaseViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
+        private readonly AddViewModel _addViewModel;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
         private IList<Statement> _statements;
 
-        public StatementsBaseViewModel(HttpClient apiClient)
+        public StatementsBaseViewModel(HttpClient apiClient, AddViewModel addViewModel)
         {
             _apiClient = apiClient;
+            _addViewModel = addViewModel;
         }
 
         public int ValueToAdd;
@@ -52,13 +56,13 @@ namespace PersonalFinanceManager.Client.Abstract
 
         public float CurrentAmount => _statements.Sum(e => e.Amount);
 
-        public abstract bool IsExpensePage { get; }
+        public abstract StatementType Type { get; }
 
         public PieConfig Config;
 
         public async Task Add()
         {
-            AddModal.Open();
+            _addViewModel.Open(Type);
             return;
         }
 
@@ -72,7 +76,7 @@ namespace PersonalFinanceManager.Client.Abstract
                     Title = new OptionsTitle
                     {
                         Display = true,
-                        Text = IsExpensePage ?
+                        Text = Type == StatementType.Expense ?
                                "Your expenses" :
                                "Your incomes"
                     }
