@@ -12,7 +12,6 @@ namespace PersonalFinanceManager.Shared.Models
         public string Name { get; set; }
         public string ColorHex { get; set; }
 
-        public int StatementId { get; set; }
-        public Statement Statement { get; set; }
+        public IList<Statement> Statements { get; set; }
     }
 }

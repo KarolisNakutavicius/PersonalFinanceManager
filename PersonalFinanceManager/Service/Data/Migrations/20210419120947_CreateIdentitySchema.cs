@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
-    public partial class Identity : Migration
+    public partial class CreateIdentitySchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,6 +44,20 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ColorHex = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,6 +173,8 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     StatementId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<float>(type: "real", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     statement_type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -171,17 +187,13 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Statements_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "uniqueId", 0, "2dc9963e-39b4-4697-ac65-f3ffe42cd77f", "karolis.nakutavicius@stud.mif.vu.lt", false, false, null, null, null, null, null, false, "3eb86064-3f17-426c-8b2e-0b641ff9be40", false, null });
-
-            migrationBuilder.InsertData(
-                table: "Statements",
-                columns: new[] { "StatementId", "Amount", "UserId", "statement_type" },
-                values: new object[] { 1, 100f, "uniqueId", "income" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -223,6 +235,11 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Statements_CategoryId",
+                table: "Statements",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Statements_UserId",
                 table: "Statements",
                 column: "UserId");
@@ -253,6 +270,9 @@ namespace PersonalFinanceManager.Service.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

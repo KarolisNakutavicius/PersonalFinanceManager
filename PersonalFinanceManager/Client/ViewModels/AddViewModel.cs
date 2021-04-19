@@ -1,39 +1,64 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
+using PersonalFinanceManager.Client.Enums;
+using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Client.ViewModels
 {
     public class AddViewModel : IViewModel
     {
-        [Parameter]
-        public bool IsSomething { get; set; }
+        private readonly HttpClient _apiClient;
+
+        [Required]
+        public StatementType StatementType { get; set; }
+
+        [Required]
+        public float Value { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
+
+        public string NewColorHex { get; set; }
+
+        [Required]
+        public string NewCategory { get; set; }
+
+        public AddViewModel(HttpClient apiClient)
+        {
+            _apiClient = apiClient;    
+        }
 
         public async Task OnInit()
         {
-            throw new NotImplementedException();
+            Date = DateTime.Now;
         }
 
-        public Guid Guid = Guid.NewGuid();
-        public string ModalDisplay = "none;";
-        public string ModalClass = "";
-        public bool ShowBackdrop = false;
-
-        public void Open()
+        public async Task Add()
         {
-            ModalDisplay = "block;";
-            ModalClass = "Show";
-            ShowBackdrop = true;
+            Statement newStatement = new Statement
+            {
+                Amount = Value,
+                DateTime = Date,
+                Category = new Category
+                {
+                    ColorHex = NewColorHex,
+                    Name = NewCategory
+                }
+            };
+
+            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            {
+                var result = await _apiClient.PostAsJsonAsync(StatementType.GetDescription(), newStatement, cts.Token);
+            }            
         }
 
-        public void Close()
-        {
-            ModalDisplay = "none";
-            ModalClass = "";
-            ShowBackdrop = false;
-        }
     }
 }

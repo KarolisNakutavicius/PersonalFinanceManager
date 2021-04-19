@@ -60,23 +60,6 @@ namespace PersonalFinanceManager.Client.Abstract
         {
             AddModal.Open();
             return;
-
-            if (ValueToAdd == 0)
-            {
-                return;
-            }
-
-            var data = new Expense { Amount = ValueToAdd };
-
-            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
-            {
-                var result = await _apiClient.PostAsJsonAsync("Expenses", data, cts.Token);
-
-                if (result.IsSuccessStatusCode)
-                {
-                    _statements.Add(data);
-                }
-            }
         }
 
         public async Task OnInit()

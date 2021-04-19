@@ -19,8 +19,11 @@ namespace PersonalFinanceManager.Server.Contexts
 
         public DbSet<Expense> Expenses { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public FinanceManagerContext(DbContextOptions<FinanceManagerContext> options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,10 +41,10 @@ namespace PersonalFinanceManager.Server.Contexts
                 .WithMany(u => u.Statements)
                 .HasForeignKey(s => s.UserId);
 
-            modelBuilder.Entity<Category>()
-                .HasOne(c => c.Statement)
-                .WithOne(s => s.Category)
-                .HasForeignKey<Statement>(s => s.StatementId);
+            modelBuilder.Entity<Statement>()
+                .HasOne(s => s.Category)
+                .WithMany(c => c.Statements)
+                .HasForeignKey(s => s.CategoryId);
         }
     }
 }
