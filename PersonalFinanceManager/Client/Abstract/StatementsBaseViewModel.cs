@@ -62,8 +62,7 @@ namespace PersonalFinanceManager.Client.Abstract
 
         public async Task Add()
         {
-            _addViewModel.Open(Type);
-            return;
+            await _addViewModel.Open(Type);
         }
 
         public async Task OnInit()
@@ -82,7 +81,7 @@ namespace PersonalFinanceManager.Client.Abstract
                     }
                 }
             };
-            await GetExpenses();
+            await GetStatements();
 
             if (_statements != null)
             {
@@ -91,7 +90,7 @@ namespace PersonalFinanceManager.Client.Abstract
         }
 
 
-        private async Task GetExpenses()
+        private async Task GetStatements()
         {
             //using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             //{
@@ -142,6 +141,7 @@ namespace PersonalFinanceManager.Client.Abstract
                     Config.Data.Labels.Add(category);
                     dataset.Add(expense.Amount);
                     colors.Add(expense.Category.ColorHex);
+                    continue;
                 }
 
                 int indexOfLabel = Config.Data.Labels.IndexOf(category);
