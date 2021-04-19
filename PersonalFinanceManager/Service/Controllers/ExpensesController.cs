@@ -87,21 +87,12 @@ namespace PersonalFinanceManager.Service.Controllers
         {
             expense.UserId = _currentIdentity.GetUserId();
 
+            _context.Expenses.Add(expense);
+            await _context.SaveChangesAsync();
 
-            var list = _context.Categories.ToList();
+            var result = CreatedAtAction("GetExpense", new { id = expense.StatementId }, expense);
 
-            try
-            {
-                _context.Expenses.Add(expense);
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                return BadRequest();
-            }
-
-
-            return CreatedAtAction("GetExpense", new { id = expense.StatementId }, expense);
+            return result;
         }
 
         // DELETE: api/Expenses/5

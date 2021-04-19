@@ -26,10 +26,13 @@ namespace PersonalFinanceManager.Client.ViewModels
         [Required]
         public DateTime Date { get; set; }
 
+        [Required]
         public string NewColorHex { get; set; }
 
         [Required]
         public string NewCategory { get; set; }
+
+        public event EventHandler OnAddSuccess;
 
         public AddViewModel(HttpClient apiClient)
         {
@@ -54,9 +57,14 @@ namespace PersonalFinanceManager.Client.ViewModels
                 }
             };
 
-            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+            using (var cts = new CancellationTokenSource())
             {
                 var result = await _apiClient.PostAsJsonAsync(StatementType.GetDescription(), newStatement, cts.Token);
+
+                if(result.IsSuccessStatusCode)
+                {
+                    this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
+                }
             }            
         }
 

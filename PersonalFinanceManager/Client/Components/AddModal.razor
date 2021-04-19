@@ -74,6 +74,7 @@
         ViewModel.StatementType = Statement;
         ViewModel.Date = DateTime.Now;
         ViewModel.NewColorHex = "#CD32C8";
+        ViewModel.OnAddSuccess += (s, e) => Close();
     }
 
     public string ModalDisplay = "none;";
