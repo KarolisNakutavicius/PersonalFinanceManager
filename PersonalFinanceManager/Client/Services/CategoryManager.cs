@@ -35,7 +35,7 @@ namespace PersonalFinanceManager.Client.Services
             try
             {
                 _expenseCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Expenses/Categories");
-                _incomeCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Income/Categories");
+                _incomeCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Incomes/Categories");
             }
             catch(Exception ex)
             {

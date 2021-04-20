@@ -115,6 +115,11 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public void OnSelectionChanged()
         {
+            if (Categories.Count == 0)
+            {
+                return;
+            }
+
             NewCategory = string.Empty;
             var categoryObj = Categories.FirstOrDefault(c => c.Name.Equals(SelectedCategory));
             if (categoryObj == null)

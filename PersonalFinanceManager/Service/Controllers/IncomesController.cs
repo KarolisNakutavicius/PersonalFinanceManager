@@ -41,8 +41,9 @@ namespace PersonalFinanceManager.Server.Controllers
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await _context.Incomes.Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).Select(e => e.Category).ToListAsync();
+            return await _context.Categories.Include(c => c.Statements).Where(c => c.Statements.Any(e => e.UserId.Equals(_currentIdentity.GetUserId()) && e is IncomeModel)).ToListAsync();
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<IncomeModel>> GetIncome(int id)
