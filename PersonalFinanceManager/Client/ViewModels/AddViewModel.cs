@@ -29,10 +29,9 @@ namespace PersonalFinanceManager.Client.ViewModels
             set
             {
                 _type = value;
-                Categories = _categoryManager.GetCategories(_type);
+                GetCategories();
             }
         }
-
 
         [Required]
         public float Value { get; set; }
@@ -95,6 +94,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
                 if(result.IsSuccessStatusCode)
                 {
+                    await _categoryManager.GetAllCategories();
                     this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
                 }
             }            
@@ -105,7 +105,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             StatementType = type;            
             Date = DateTime.Now;
             NewColorHex = "#CD32C8";
-            Categories = _categoryManager.GetCategories(type);
+            await GetCategories();
             OnSelectionChanged();
             this.OpenRequested?.Invoke(this, EventArgs.Empty);
         }
@@ -121,6 +121,11 @@ namespace PersonalFinanceManager.Client.ViewModels
                     NewColorHex = categoryObj.ColorHex;
                 }
             }
+        }
+
+        private async Task GetCategories()
+        {
+            Categories = await _categoryManager.GetCategories(_type);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace PersonalFinanceManager.Service.Controllers
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await _context.Expenses.Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).Select(e => e.Category).ToListAsync();
+            return await _context.Categories.Include(c => c.Statements).Where(c => c.Statements.Any(e => e.UserId.Equals(_currentIdentity.GetUserId()))).ToListAsync();
         }
 
         // GET: api/Expenses/5

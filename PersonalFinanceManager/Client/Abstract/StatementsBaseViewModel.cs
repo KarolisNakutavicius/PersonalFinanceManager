@@ -1,4 +1,5 @@
-﻿using ChartJs.Blazor.Common;
+﻿using ChartJs.Blazor;
+using ChartJs.Blazor.Common;
 using ChartJs.Blazor.PieChart;
 using PersonalFinanceManager.Client.Components;
 using PersonalFinanceManager.Client.Contracts;
@@ -23,17 +24,35 @@ namespace PersonalFinanceManager.Client.Abstract
         private readonly CategoryManager _categoryManager;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
-        private IList<Category> _categories;
+        private IList<Category> _sortedCategories;
 
         public StatementsBaseViewModel(AddViewModel addViewModel, CategoryManager categoryManager)
         {
             _addViewModel = addViewModel;
             _categoryManager = categoryManager;
+            _categoryManager.CategoryUpdated += (s, e) => GeneratePie();
         }
 
-        public int ValueToAdd { get; set; }
+        public string Title { get; set; }
 
-        public IList<Category> SortedCategories { get; set; } = new List<Category>();
+        public Chart Chart { get; set; }
+
+        public IList<Category> SortedCategories
+        {
+            get => _sortedCategories;
+            set
+            {
+                _sortedCategories = value;
+
+                var amount = SortedCategories.Sum(c => c.Statements.Where(s => s.DateTime < DateTo && s.DateTime > DateFrom).Sum(c => c.Amount));
+                if (amount == 0)
+                {
+                    Title = $"There are no {Type.GetDescription()} in current time frame";
+                    return;
+                }
+                Title = $"Your total {Type.GetDescription()} : {amount}";
+            }
+        }
 
         public DateTime DateFrom
         {
@@ -77,38 +96,30 @@ namespace PersonalFinanceManager.Client.Abstract
                     Responsive = true,
                     Title = new OptionsTitle
                     {
-                        Display = true,
-                        Text = Type == StatementType.Expense ?
-                               "Your expenses" :
-                               "Your incomes"
+                        Display = false
                     }
                 }
             };
 
-            _categories = _categoryManager.GetCategories(Type);
-
-            if (_categories != null)
-            {
-                GeneratePie();
-            }
+            await GeneratePie();
         }
 
-        public void GeneratePie()
+        public async Task GeneratePie()
         {
+            var categories =  await _categoryManager.GetCategories(Type);
+
             Config.Data.Labels.Clear();
             Config.Data.Datasets.Clear();
 
             PieDataset<float> dataset = new PieDataset<float>();
             IList<string> colors = new List<string>();
 
-            var sortedCategories = _categories.Where(c => c.Statements?.Any(s => s.DateTime < DateFrom && s.DateTime > DateTo) ?? false).ToList();
+            SortedCategories = categories.Where(c => c.Statements?.Any(s => s.DateTime > DateFrom && s.DateTime < DateTo) ?? false).ToList();
 
-            if (sortedCategories == null || sortedCategories.Count == 0)
+            if (SortedCategories == null || SortedCategories.Count == 0)
             {
                 return;
             }
-
-            SortedCategories = sortedCategories;
 
             foreach (var category in SortedCategories)
             {
@@ -120,6 +131,8 @@ namespace PersonalFinanceManager.Client.Abstract
 
             dataset.BackgroundColor = colors.ToArray();
             Config.Data.Datasets.Add(dataset);
+
+            await Chart.Update();
         }
     }
 }

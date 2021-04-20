@@ -7,7 +7,7 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <h5>Total expenses this month : @ViewModel.CurrentAmount</h5>
+        <h5>@ViewModel.Title</h5>
     </div>
 
     <EditForm Model="ViewModel">
@@ -23,7 +23,7 @@
 
 
     <div class="row mt-3">
-        <Chart Config="ViewModel.Config"></Chart>
+        <Chart Config="ViewModel.Config" @ref="ViewModel.Chart"></Chart>
     </div>
 
 </div>
