@@ -44,16 +44,9 @@ namespace PersonalFinanceManager.Client.Abstract
             {
                 _sortedCategories = value;
 
-                var amount = SortedCategories.Sum(c => c.Statements.Where(s => s.DateTime < DateTo && s.DateTime > DateFrom).Sum(c => c.Amount));
-                if (amount == 0)
-                {
-                    Title = $"There are no {Type.GetDescription()} in current time frame";
-                    return;
-                }
-                Title = $"Your total {Type.GetDescription()} : {amount}";
+                UpdateTitle();
             }
         }
-
         public DateTime DateFrom
         {
             get => _dateFrom ?? DateTime.Now.AddMonths(-1);
@@ -106,34 +99,52 @@ namespace PersonalFinanceManager.Client.Abstract
 
         public async Task GeneratePie()
         {
-            var categories =  await _categoryManager.GetCategories(Type);
-
-            Config.Data.Labels.Clear();
-            Config.Data.Datasets.Clear();
-
-            PieDataset<float> dataset = new PieDataset<float>();
-            IList<string> colors = new List<string>();
-
-            SortedCategories = categories.Where(c => c.Statements?.Any(s => s.DateTime > DateFrom && s.DateTime < DateTo) ?? false).ToList();
-
-            if (SortedCategories == null || SortedCategories.Count == 0)
+            try
             {
+                var categories = await _categoryManager.GetCategories(Type);
+                Config.Data.Labels.Clear();
+                Config.Data.Datasets.Clear();
+
+                PieDataset<float> dataset = new PieDataset<float>();
+                IList<string> colors = new List<string>();
+
+                SortedCategories = categories.Where(c => c.Statements?.Any(s => s.DateTime > DateFrom && s.DateTime < DateTo) ?? false).ToList();
+
+                if (SortedCategories == null || SortedCategories.Count == 0)
+                {
+                    return;
+                }
+
+                foreach (var category in SortedCategories)
+                {
+                    Config.Data.Labels.Add(category.Name);
+                    float totalAmount = category.Statements.Where((s => s.DateTime < DateTo && s.DateTime > DateFrom)).Sum(s => s.Amount);
+                    dataset.Add(totalAmount);
+                    colors.Add(category.ColorHex);
+                }
+
+                dataset.BackgroundColor = colors.ToArray();
+                Config.Data.Datasets.Add(dataset);
+                UpdateTitle();
+                await Chart.Update();
+            }
+            catch(Exception ex)
+            {
+                //do nothin
+            }         
+        }
+
+        private void UpdateTitle()
+        {
+            var amount = SortedCategories.Sum(c => c.Statements.Where(s => s.DateTime < DateTo && s.DateTime > DateFrom).Sum(c => c.Amount));
+            if (amount == 0)
+            {
+                Title = $"There are no {Type.GetDescription()} in current time frame";
                 return;
             }
-
-            foreach (var category in SortedCategories)
-            {
-                Config.Data.Labels.Add(category.Name);                
-                float totalAmount = category.Statements.Where((s => s.DateTime < DateTo && s.DateTime > DateFrom)).Sum(s => s.Amount);
-                dataset.Add(totalAmount);
-                colors.Add(category.ColorHex);
-            }
-
-            dataset.BackgroundColor = colors.ToArray();
-            Config.Data.Datasets.Add(dataset);
-
-            await Chart.Update();
+            Title = $"Your total {Type.GetDescription()} : {amount}";
         }
+
     }
 }
 
