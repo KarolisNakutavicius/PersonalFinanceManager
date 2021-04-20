@@ -29,11 +29,12 @@ namespace PersonalFinanceManager.Client.ViewModels
             set
             {
                 _type = value;
-                GetCategories();
+                _ = GetCategories();
             }
         }
 
-        [Required]
+        [Required]        
+        [Range(1, double.MaxValue)]
         public float Value { get; set; }
 
         [Required]
@@ -52,12 +53,12 @@ namespace PersonalFinanceManager.Client.ViewModels
 
                 if(_newCategory != string.Empty)
                 {
-                    SelectedCategory = _newCategory;
+                    SelectedCategory = string.Empty;
                 }
             }
         }
 
-        public string SelectedCategory { get; set; }
+        public string SelectedCategory { get; set; } = string.Empty;
 
 
         public event EventHandler OnAddSuccess;
@@ -84,7 +85,9 @@ namespace PersonalFinanceManager.Client.ViewModels
                 Category = new Category
                 {
                     ColorHex = NewColorHex,
-                    Name = NewCategory
+                    Name = SelectedCategory != string.Empty ?
+                            SelectedCategory :
+                            NewCategory
                 }
             };
 
@@ -112,15 +115,15 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public void OnSelectionChanged()
         {
-            if (SelectedCategory != string.Empty)
+            NewCategory = string.Empty;
+            var categoryObj = Categories.FirstOrDefault(c => c.Name.Equals(SelectedCategory));
+            if (categoryObj == null)
             {
-                NewCategory = string.Empty;
-                var categoryObj = Categories.FirstOrDefault(c => c.Name.Equals(SelectedCategory));
-                if (categoryObj != null)
-                {
-                    NewColorHex = categoryObj.ColorHex;
-                }
+                categoryObj = Categories.First();
             }
+            
+            SelectedCategory = categoryObj.Name;
+            NewColorHex = categoryObj.ColorHex;
         }
 
         private async Task GetCategories()
