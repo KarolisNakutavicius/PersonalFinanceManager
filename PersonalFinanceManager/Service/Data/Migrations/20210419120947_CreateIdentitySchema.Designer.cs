@@ -10,8 +10,8 @@ using PersonalFinanceManager.Server.Contexts;
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
     [DbContext(typeof(FinanceManagerContext))]
-    [Migration("20210407125255_Identity")]
-    partial class Identity
+    [Migration("20210419120947_CreateIdentitySchema")]
+    partial class CreateIdentitySchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -156,6 +156,24 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Statement", b =>
                 {
                     b.Property<int>("StatementId")
@@ -166,6 +184,12 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     b.Property<float>("Amount")
                         .HasColumnType("real");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -174,6 +198,8 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("StatementId");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -245,20 +271,6 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "uniqueId",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "2dc9963e-39b4-4697-ac65-f3ffe42cd77f",
-                            Email = "karolis.nakutavicius@stud.mif.vu.lt",
-                            EmailConfirmed = false,
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "3eb86064-3f17-426c-8b2e-0b641ff9be40",
-                            TwoFactorEnabled = false
-                        });
                 });
 
             modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Expense", b =>
@@ -273,14 +285,6 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     b.HasBaseType("PersonalFinanceManager.Shared.Models.Statement");
 
                     b.HasDiscriminator().HasValue("income");
-
-                    b.HasData(
-                        new
-                        {
-                            StatementId = 1,
-                            Amount = 100f,
-                            UserId = "uniqueId"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -336,11 +340,24 @@ namespace PersonalFinanceManager.Service.Data.Migrations
 
             modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Statement", b =>
                 {
+                    b.HasOne("PersonalFinanceManager.Shared.Models.Category", "Category")
+                        .WithMany("Statements")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PersonalFinanceManager.Shared.Models.User", "User")
                         .WithMany("Statements")
                         .HasForeignKey("UserId");
 
+                    b.Navigation("Category");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Category", b =>
+                {
+                    b.Navigation("Statements");
                 });
 
             modelBuilder.Entity("PersonalFinanceManager.Shared.Models.User", b =>

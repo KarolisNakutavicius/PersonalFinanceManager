@@ -1,12 +1,32 @@
 ﻿@page "/Income"
 @attribute [Authorize]
 @inherits IncomeViewComponent
+@using ChartJs.Blazor;
+@using PersonalFinanceManager.Client.Components;
 
-<p>Total income this month : @ViewModel.TotalIncome</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <h5>@ViewModel.Title</h5>
+    </div>
 
-<input type="number" @bind="ViewModel.ValueToAdd" />
+    <EditForm Model="ViewModel">
+        <div class="row mt-3">
+            <div class="col-lg-1 col-3">From :</div>
+            <InputDate class="col-xl-2 col-md-3 col-6" type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
+        </div>
+        <div class="row">
+            <div class="col-lg-1 col-3">To :</div>
+            <InputDate class="col-xl-2 col-md-3 col-6" type="date" @bind-Value="ViewModel.DateTo"></InputDate>
+        </div>
+    </EditForm>
 
-<button class="btn btn-primary" @onclick="ViewModel.AddIncome">Add</button>
 
+    <div class="row mt-3">
+        <Chart Config="ViewModel.Config" @ref="ViewModel.Chart"></Chart>
+    </div>
+
+</div>
+
+<button class="plus-button" @onclick="ViewModel.Add"></button>
 
 

@@ -1,0 +1,107 @@
+﻿@inject HttpClient ApiClient
+@using PersonalFinanceManager.Shared.Models;
+@inherits AddModalComponent;
+@inject IJSRuntime JSRuntime
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <EditForm Model="ViewModel" OnValidSubmit="ViewModel.Add">
+                <div class="modal-header">
+                    <div class="container">
+                        <div class="row">
+                            <h5 class="modal-title">Add</h5>
+                            <InputSelect @bind-Value="ViewModel.StatementType" class="col-4 ml-3">
+                                @foreach (var type in Enum.GetValues(typeof(StatementType)))
+                                {
+                                    <option value="@type">@type.ToString()</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="container" style="padding: 20px;">
+                        <div class="row">
+                            <label class="col-3">Amount :</label>
+                            <InputNumber id="inputAmaount"
+                                         TValue="float" @bind-Value="ViewModel.Value" class="col" type="number" step=".05" placeholder="Amount"></InputNumber>
+                        </div>
+                        <div class="row mt-3">
+                            <label class="col-3">Category :</label>
+                            <InputSelect @bind-Value="ViewModel.SelectedCategory" class="col" @onclick="ViewModel.OnSelectionChanged">
+                                @foreach (var category in ViewModel.Categories)
+                                {
+                                    <option value="@category.Name">@category.Name</option>
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3"></div>
+                            <InputText @bind-Value="ViewModel.NewCategory" class="col" type="text" placeholder="New Category (Optional)"></InputText>
+                        </div>
+
+                        <div class="row">
+                            <label class="col-3">Date :</label>
+                            <InputDate class="col" type="date" @bind-Value="ViewModel.Date"></InputDate>
+                        </div>
+                        <div class="row mt-3">
+                            <label class="col-3">Color :</label>
+                            <input class="col" type="color" @bind="ViewModel.NewColorHex" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.OnAddSuccess += (s, e) => Close();
+        ViewModel.OpenRequested += (s, e) => Open();
+    }
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}

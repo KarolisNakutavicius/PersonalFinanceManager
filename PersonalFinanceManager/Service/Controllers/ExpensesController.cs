@@ -35,6 +35,12 @@ namespace PersonalFinanceManager.Service.Controllers
             return await _context.Expenses.Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).ToListAsync();
         }
 
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            return await _context.Categories.Include(c => c.Statements).Where(c => c.Statements.Any(e => e.UserId.Equals(_currentIdentity.GetUserId()) && e is Expense)).ToListAsync();
+        }
+
         // GET: api/Expenses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> GetExpense(int id)
@@ -87,10 +93,20 @@ namespace PersonalFinanceManager.Service.Controllers
         {
             expense.UserId = _currentIdentity.GetUserId();
 
+            var category = _context.Categories.Include(c => c.Statements).FirstOrDefault(c => c.Statements.Any(s => s.UserId.Equals(expense.UserId)) && c.Name.Equals(expense.Category.Name));
+
+            if(category != null)
+            {
+                //category.ColorHex = expense.Category.ColorHex;
+                expense.Category = category;
+            }
+
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetExpense", new { id = expense.StatementId }, expense);
+            var result = CreatedAtAction("GetExpense", new { id = expense.StatementId }, expense);
+
+            return result;
         }
 
         // DELETE: api/Expenses/5

@@ -38,6 +38,13 @@ namespace PersonalFinanceManager.Server.Controllers
             return await _context.Incomes.Where(i => i.UserId == _currentIdentity.GetUserId()).ToListAsync();
         }
 
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            return await _context.Categories.Include(c => c.Statements).Where(c => c.Statements.Any(e => e.UserId.Equals(_currentIdentity.GetUserId()) && e is IncomeModel)).ToListAsync();
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult<IncomeModel>> GetIncome(int id)
         {
