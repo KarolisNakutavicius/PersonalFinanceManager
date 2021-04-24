@@ -4,6 +4,7 @@ using ChartJs.Blazor.Common;
 using ChartJs.Blazor.Common.Enums;
 using ChartJs.Blazor.Util;
 using PersonalFinanceManager.Client.Contracts;
+using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,8 +16,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 {
     public class HomeViewModel : IViewModel
     {
-        private const int InitalCount = 7;
-        private static readonly Random _rng = new Random();
+        private const int MonthsInYear = 12;
 
         public BarConfig Config { get; set; } = new BarConfig
         {
@@ -30,33 +30,70 @@ namespace PersonalFinanceManager.Client.ViewModels
                 Title = new OptionsTitle
                 {
                     Display = true,
-                    Text = "ChartJs.Blazor Bar Chart"
+                    Text = "Overview"
                 }
             }
         };
         public Chart Chart { get; set; }
 
+
+        private IList<Expense> _expenses;
+
+        private IList<IncomeModel> _incomes;
+
         public async Task OnInit()
         {
-            IDataset<int> dataset1 = new BarDataset<int>(RandomScalingFactor(InitalCount))
+            _expenses = new List<Expense>
             {
-                Label = "My first dataset",
+                new Expense { Amount = 200, DateTime = DateTime.Now.AddMonths(-1)},
+                 new Expense { Amount = 300, DateTime = DateTime.Now.AddMonths(-5)},
+                  new Expense { Amount = 200, DateTime = DateTime.Now},
+                   new Expense { Amount = 250, DateTime = DateTime.Now.AddMonths(-3)},
+                    new Expense { Amount = 400, DateTime = DateTime.Now.AddMonths(-2)},
+            };
+
+            _incomes = new List<IncomeModel>
+            {
+                new IncomeModel { Amount = 200, DateTime = DateTime.Now.AddMonths(-1)},
+                 new IncomeModel { Amount = 300, DateTime = DateTime.Now.AddMonths(-5)},
+                  new IncomeModel { Amount = 200, DateTime = DateTime.Now},
+                   new IncomeModel { Amount = 250, DateTime = DateTime.Now.AddMonths(-3)},
+                    new IncomeModel { Amount = 400, DateTime = DateTime.Now.AddMonths(-2)},
+            };
+
+            GenerateBarChart();
+        }
+
+        private void GenerateBarChart()
+        {
+            IDataset<int> expenseDataSet = new BarDataset<int>()
+            {
+                Label = "Expenses",
                 BackgroundColor = ColorUtil.FromDrawingColor(Color.FromArgb(128, Color.Red)),
                 BorderColor = ColorUtil.FromDrawingColor(Color.Red),
                 BorderWidth = 1
             };
 
-            IDataset<int> dataset2 = new BarDataset<int>(RandomScalingFactor(InitalCount))
+            IDataset<int> incomeDataSet = new BarDataset<int>()
             {
-                Label = "My second dataset",
-                BackgroundColor = ColorUtil.FromDrawingColor(Color.FromArgb(128, Color.Blue)),
-                BorderColor = ColorUtil.FromDrawingColor(Color.Blue),
+                Label = "Incomes",
+                BackgroundColor = ColorUtil.FromDrawingColor(Color.FromArgb(128, Color.Green)),
+                BorderColor = ColorUtil.FromDrawingColor(Color.Green),
                 BorderWidth = 1
             };
 
-            ((List<string>)Config.Data.Labels).AddRange(Months.Take(InitalCount));
-            Config.Data.Datasets.Add(dataset1);
-            Config.Data.Datasets.Add(dataset2);
+            for (int i = 0; i < MonthsInYear; i++)
+            {
+                int expenseAmount = -(int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                expenseDataSet.Add(expenseAmount);
+
+                int incomeAmount = (int)_incomes.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                incomeDataSet.Add(incomeAmount);
+            }
+
+            ((List<string>)Config.Data.Labels).AddRange(Months.Take(MonthsInYear));
+            Config.Data.Datasets.Add(expenseDataSet);
+            Config.Data.Datasets.Add(incomeDataSet);
         }
 
         public static IReadOnlyList<string> Months { get; } = new ReadOnlyCollection<string>(new[]
@@ -64,20 +101,5 @@ namespace PersonalFinanceManager.Client.ViewModels
             "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
         });
 
-        public static IEnumerable<int> RandomScalingFactor(int count)
-        {
-            int[] factors = new int[count];
-            lock (_rng)
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    factors[i] = RandomScalingFactorThreadUnsafe();
-                }
-            }
-
-            return factors;
-        }
-
-        private static int RandomScalingFactorThreadUnsafe() => _rng.Next(-100, 100);
     }
 }
