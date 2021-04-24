@@ -22,12 +22,6 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
 
-        private const int MonthsInYear = 12;
-        private static IReadOnlyList<string> Months { get; } = new ReadOnlyCollection<string>(new[]
-        {
-            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-        });
-
         public HomeViewModel(HttpClient apiClient)
         {
             _apiClient = apiClient;
@@ -73,25 +67,6 @@ namespace PersonalFinanceManager.Client.ViewModels
                 //do nothing
             }
 
-
-            //_expenses = new List<Expense>
-            //{
-            //    new Expense { Amount = 200, DateTime = DateTime.Now.AddMonths(-1)},
-            //     new Expense { Amount = 300, DateTime = DateTime.Now.AddMonths(-5)},
-            //      new Expense { Amount = 200, DateTime = DateTime.Now},
-            //       new Expense { Amount = 250, DateTime = DateTime.Now.AddMonths(-3)},
-            //        new Expense { Amount = 400, DateTime = DateTime.Now.AddMonths(-2)},
-            //};
-
-            //_incomes = new List<IncomeModel>
-            //{
-            //    new IncomeModel { Amount = 200, DateTime = DateTime.Now.AddMonths(-1)},
-            //     new IncomeModel { Amount = 300, DateTime = DateTime.Now.AddMonths(-5)},
-            //      new IncomeModel { Amount = 200, DateTime = DateTime.Now},
-            //       new IncomeModel { Amount = 250, DateTime = DateTime.Now.AddMonths(-3)},
-            //        new IncomeModel { Amount = 400, DateTime = DateTime.Now.AddMonths(-2)},
-            //};
-
             await GenerateBarChart();
         }
 
@@ -116,7 +91,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 BorderWidth = 1
             };
 
-            for (int i = 0; i < MonthsInYear; i++)
+            for (int i = 0; i < Constants.MonthsInYear; i++)
             {
                 int expenseAmount = (int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
                 expenseDataSet.Add(expenseAmount);
@@ -125,7 +100,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 incomeDataSet.Add(incomeAmount);
             }
 
-            ((List<string>)Config.Data.Labels).AddRange(Months.Take(MonthsInYear));
+            ((List<string>)Config.Data.Labels).AddRange(Constants.Months);
             Config.Data.Datasets.Add(expenseDataSet);
             Config.Data.Datasets.Add(incomeDataSet);
 
