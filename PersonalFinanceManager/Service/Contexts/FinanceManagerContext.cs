@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using PersonalFinanceManager.Shared.Models;
 using System;
@@ -20,6 +21,8 @@ namespace PersonalFinanceManager.Server.Contexts
         public DbSet<Expense> Expenses { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Budget> Budgets { get; set; }
 
         public FinanceManagerContext(DbContextOptions<FinanceManagerContext> options) : base(options)
         {
@@ -45,6 +48,10 @@ namespace PersonalFinanceManager.Server.Contexts
                 .HasOne(s => s.Category)
                 .WithMany(c => c.Statements)
                 .HasForeignKey(s => s.CategoryId);
+
+            modelBuilder.Entity<Budget>()
+                .HasMany(b => b.Categories)
+                .WithMany(c => c.Budgets);
         }
     }
 }

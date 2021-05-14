@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Shared.Models
 {
-    public class Category
+    public class Budget
     {
-        public int CategoryId { get; set; }
+        public int BudgetId { get; set; }
+        public int Amount { get; set; }
         public string Name { get; set; }
-        public string ColorHex { get; set; }
-
-        public IList<Statement> Statements { get; set; }
-        public IList<Budget> Budgets { get; set; }
+        public List<Category> Categories { get; set; }
     }
 }
