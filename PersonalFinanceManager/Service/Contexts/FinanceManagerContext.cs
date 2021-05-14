@@ -49,6 +49,8 @@ namespace PersonalFinanceManager.Server.Contexts
                 .WithMany(c => c.Statements)
                 .HasForeignKey(s => s.CategoryId);
 
+            modelBuilder.Entity<Budget>().Property(b => b.BudgetId).ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Budget>()
                 .HasMany(b => b.Categories)
                 .WithMany(c => c.Budgets);

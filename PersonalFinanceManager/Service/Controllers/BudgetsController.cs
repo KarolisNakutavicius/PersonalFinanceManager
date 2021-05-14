@@ -31,6 +31,12 @@ namespace PersonalFinanceManager.Service.Controllers
         [HttpPost]
         public async Task<ActionResult<Budget>> PostBudget(Budget budget)
         {
+            var catogeries = _context.Categories.ToList().Where(c => budget.Categories.FirstOrDefault(bc => c.Name == bc.Name) != null).ToList();
+
+            budget.Categories.Clear();
+
+            budget.Categories = catogeries;
+
             _context.Budgets.Add(budget);
             await _context.SaveChangesAsync();
 

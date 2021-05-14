@@ -49,14 +49,14 @@ namespace PersonalFinanceManager.Client.Services
             }
         }
 
-        public async Task<IList<Category>> GetExpenseCategories()
+        public async Task<List<Category>> GetExpenseCategories()
         {
             if (_expenseCategories == null)
             {
                 await GetAllCategories();
             }
 
-            return _expenseCategories;
+            return new List<Category>(_expenseCategories);
         }
 
         public IList<Category> GetIncomeCategories()
