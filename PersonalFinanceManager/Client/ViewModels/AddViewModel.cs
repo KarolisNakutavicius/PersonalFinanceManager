@@ -150,7 +150,7 @@ namespace PersonalFinanceManager.Client.ViewModels
         {
             StatementType = type;            
             Date = DateTime.Now;
-            NewColorHex = "#CD32C8";
+            NewColorHex = Constants.DefaultColorHex;
             await GetCategories();
             OnSelectionChanged();
             this.OpenRequested?.Invoke(this, EventArgs.Empty);

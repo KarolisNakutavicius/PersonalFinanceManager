@@ -18,5 +18,7 @@ namespace PersonalFinanceManager.Client.Properties
         });
 
         public const string AllCategories = "All categories";
+
+        public const string DefaultColorHex = "#CD32C8";
     }
 }
