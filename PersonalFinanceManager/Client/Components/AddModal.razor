@@ -30,7 +30,16 @@
                     <DataAnnotationsValidator />
                     <ValidationSummary />
                     <div class="container" style="padding: 20px;">
-                        <div class="row">
+
+                        @if (ViewModel.IsBudget)
+                        {
+                            <div class="row">
+                                <label class="col-4">Budget Name :</label>
+                                <InputText class="col" @bind-Value="ViewModel.BudgetName"></InputText>
+                            </div>
+                        }
+
+                        <div class="row mt-3">
                             <label class="col-3">Amount :</label>
                             <InputNumber id="inputAmaount"
                                          TValue="float" @bind-Value="ViewModel.Value" class="col" type="number" step=".05" placeholder="Amount"></InputNumber>
@@ -45,19 +54,23 @@
                             </InputSelect>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3"></div>
-                            <InputText @bind-Value="ViewModel.NewCategory" class="col" type="text" placeholder="New Category (Optional)"></InputText>
-                        </div>
+                        @if (!ViewModel.IsBudget)
+                        {
+                            <div class="row mt-3">
+                                <div class="col-3"></div>
+                                <InputText @bind-Value="ViewModel.NewCategory" class="col" type="text" placeholder="New Category (Optional)"></InputText>
+                            </div>
 
-                        <div class="row">
-                            <label class="col-3">Date :</label>
-                            <InputDate class="col" type="date" @bind-Value="ViewModel.Date"></InputDate>
-                        </div>
-                        <div class="row mt-3">
-                            <label class="col-3">Color :</label>
-                            <input class="col" type="color" @bind="ViewModel.NewColorHex" />
-                        </div>
+                            <div class="row">
+                                <label class="col-3">Date :</label>
+                                <InputDate class="col" type="date" @bind-Value="ViewModel.Date"></InputDate>
+                            </div>
+                            <div class="row mt-3">
+                                <label class="col-3">Color :</label>
+                                <input class="col" type="color" @bind="ViewModel.NewColorHex" />
+                            </div>
+                        }
+
                     </div>
                 </div>
 

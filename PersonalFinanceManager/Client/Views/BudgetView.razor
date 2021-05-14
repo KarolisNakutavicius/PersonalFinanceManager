@@ -1,0 +1,35 @@
+﻿@page "/budget"
+@inherits BudgetComponent
+@using ChartJs.Blazor;
+
+
+<div class="container-fluid">
+
+    @if (ViewModel.Budgets.Count > 0)
+    {
+        <div class="row mt-3">
+
+            <h5 class="col-lg-1 col-3">Budget :</h5>
+            <select class="col-xl-2 col-md-3 col-6" @bind="ViewModel.SelectedBudgetName">
+                @foreach (var budget in ViewModel.Budgets)
+                {
+                    <option value="@budget.Name">@budget.Name</option>
+                }
+            </select>
+        </div>
+    }
+    @if (ViewModel.Budgets.Count == 0)
+    {
+        <div class="row mt-3 justify-content-center">
+            <h1>You don't have any budgets</h1>
+        </div>
+    }
+
+
+    <div class="row mt-3">
+        <Chart Config="ViewModel.Config" @ref="ViewModel.Chart"></Chart>
+    </div>
+
+</div>
+
+<button class="plus-button" @onclick="ViewModel.Add"></button>

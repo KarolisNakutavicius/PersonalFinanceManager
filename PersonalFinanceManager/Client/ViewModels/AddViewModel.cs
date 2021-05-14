@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
+using PersonalFinanceManager.Client.Helpers;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
@@ -22,6 +23,8 @@ namespace PersonalFinanceManager.Client.ViewModels
         private string _newCategory;
         private StatementType _type;
 
+        public bool IsBudget { get; set; }
+
         [Required]
         public StatementType StatementType
         {
@@ -37,12 +40,11 @@ namespace PersonalFinanceManager.Client.ViewModels
         [Range(1, double.MaxValue)]
         public float Value { get; set; }
 
-        [Required]
+        [RequiredIf("IsBudget", false)]
         public DateTime Date { get; set; }
 
-        [Required]
+        [RequiredIf("IsBudget", false)]
         public string NewColorHex { get; set; }
-
 
         public string NewCategory
         {
@@ -60,6 +62,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public string SelectedCategory { get; set; } = string.Empty;
 
+        [RequiredIf("IsBudget", true)]
+        public string BudgetName { get; set; } = string.Empty;
 
         public event EventHandler OnAddSuccess;
 
@@ -78,6 +82,17 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task Add()
         {
+            if (IsBudget)
+            {
+                await AddBudget();
+                return;
+            }
+
+            await AddStatement();
+        }
+
+        private async Task AddStatement()
+        {
             Statement newStatement = new Statement
             {
                 Amount = Value,
@@ -86,28 +101,56 @@ namespace PersonalFinanceManager.Client.ViewModels
                 {
                     ColorHex = NewColorHex,
                     Name = SelectedCategory != string.Empty ?
-                            SelectedCategory :
-                            NewCategory
+                           SelectedCategory :
+                           NewCategory
                 }
             };
 
-            using (var cts = new CancellationTokenSource())
+            using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
             {
                 var result = await _apiClient.PostAsJsonAsync(StatementType.GetDescription(), newStatement, cts.Token);
 
-                if(result.IsSuccessStatusCode)
+                if (result.IsSuccessStatusCode)
                 {
                     await _categoryManager.GetAllCategories();
                     this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
                 }
-            }            
+            }
+        }
+
+        private async Task AddBudget()
+        {
+            Budget newBudget = new Budget
+            {
+                Amount = (int)Value,
+                Name = BudgetName
+            };
+
+            if (SelectedCategory == Constants.AllCategories)
+            {
+                newBudget.Categories = await _categoryManager.GetExpenseCategories();
+            }
+            else if (!string.IsNullOrEmpty(SelectedCategory))
+            {
+                newBudget.Categories = Categories.Where(c => c.Name == SelectedCategory).ToList();
+            }
+
+            using (var cts = new CancellationTokenSource())
+            {
+                var result = await _apiClient.PostAsJsonAsync("Budgets", newBudget, cts.Token);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
 
         public async Task Open(StatementType type)
         {
             StatementType = type;            
             Date = DateTime.Now;
-            NewColorHex = "#CD32C8";
+            NewColorHex = Constants.DefaultColorHex;
             await GetCategories();
             OnSelectionChanged();
             this.OpenRequested?.Invoke(this, EventArgs.Empty);
@@ -133,7 +176,18 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         private async Task GetCategories()
         {
+            Categories.Clear();
+
             Categories = await _categoryManager.GetCategories(_type);
+            IsBudget = _type == StatementType.Budget;
+
+            if (IsBudget)
+            {
+                Categories.Add(new Category
+                {
+                    Name = Constants.AllCategories
+                });
+            }
         }
     }
 }

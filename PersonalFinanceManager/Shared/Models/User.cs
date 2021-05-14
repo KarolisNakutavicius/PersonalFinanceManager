@@ -9,7 +9,6 @@ namespace PersonalFinanceManager.Shared.Models
 {
     public class User : IdentityUser
     {
-        //public bool IsAuthenticated { get; set; }
         public IList<Statement> Statements { get; set; }
     }
 }

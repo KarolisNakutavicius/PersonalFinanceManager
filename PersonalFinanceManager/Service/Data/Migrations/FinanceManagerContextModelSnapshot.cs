@@ -19,6 +19,21 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("BudgetCategory", b =>
+                {
+                    b.Property<int>("BudgetsBudgetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriesCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BudgetsBudgetId", "CategoriesCategoryId");
+
+                    b.HasIndex("CategoriesCategoryId");
+
+                    b.ToTable("BudgetCategory");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -154,6 +169,24 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Budget", b =>
+                {
+                    b.Property<int>("BudgetId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BudgetId");
+
+                    b.ToTable("Budgets");
+                });
+
             modelBuilder.Entity("PersonalFinanceManager.Shared.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -283,6 +316,21 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                     b.HasBaseType("PersonalFinanceManager.Shared.Models.Statement");
 
                     b.HasDiscriminator().HasValue("income");
+                });
+
+            modelBuilder.Entity("BudgetCategory", b =>
+                {
+                    b.HasOne("PersonalFinanceManager.Shared.Models.Budget", null)
+                        .WithMany()
+                        .HasForeignKey("BudgetsBudgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PersonalFinanceManager.Shared.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

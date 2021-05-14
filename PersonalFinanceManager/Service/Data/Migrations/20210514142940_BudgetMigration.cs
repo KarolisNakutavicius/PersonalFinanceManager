@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class BudgetMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,6 +44,20 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Budgets",
+                columns: table => new
+                {
+                    BudgetId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Budgets", x => x.BudgetId);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,6 +181,30 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BudgetCategory",
+                columns: table => new
+                {
+                    BudgetsBudgetId = table.Column<int>(type: "int", nullable: false),
+                    CategoriesCategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BudgetCategory", x => new { x.BudgetsBudgetId, x.CategoriesCategoryId });
+                    table.ForeignKey(
+                        name: "FK_BudgetCategory_Budgets_BudgetsBudgetId",
+                        column: x => x.BudgetsBudgetId,
+                        principalTable: "Budgets",
+                        principalColumn: "BudgetId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BudgetCategory_Categories_CategoriesCategoryId",
+                        column: x => x.CategoriesCategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Statements",
                 columns: table => new
                 {
@@ -235,6 +273,11 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BudgetCategory_CategoriesCategoryId",
+                table: "BudgetCategory",
+                column: "CategoriesCategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Statements_CategoryId",
                 table: "Statements",
                 column: "CategoryId");
@@ -263,10 +306,16 @@ namespace PersonalFinanceManager.Service.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BudgetCategory");
+
+            migrationBuilder.DropTable(
                 name: "Statements");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Budgets");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

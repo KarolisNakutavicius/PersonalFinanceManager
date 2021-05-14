@@ -26,12 +26,13 @@ namespace PersonalFinanceManager.Client.Services
         {
             _apiClient = apiClient;
 
-            GetAllCategories();
+            _ = GetAllCategories();
         }
 
         public async Task GetAllCategories()
         {
             await _categorySemaphore.WaitAsync();
+
             try
             {
                 _expenseCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Expenses/Categories");
@@ -48,8 +49,15 @@ namespace PersonalFinanceManager.Client.Services
             }
         }
 
-        public IList<Category> GetExpenseCategories()
-            => _expenseCategories;
+        public async Task<List<Category>> GetExpenseCategories()
+        {
+            if (_expenseCategories == null)
+            {
+                await GetAllCategories();
+            }
+
+            return new List<Category>(_expenseCategories);
+        }
 
         public IList<Category> GetIncomeCategories()
             => _incomeCategories;
@@ -58,13 +66,13 @@ namespace PersonalFinanceManager.Client.Services
         {
             await _categorySemaphore.WaitAsync();
 
-            var categories =  type == StatementType.Expense ?
-                _expenseCategories :
-                _incomeCategories;
+            var categories = type == StatementType.Income ?
+                _incomeCategories :
+                _expenseCategories;
 
             _categorySemaphore.Release();
 
-            return categories;
+            return new List<Category>(categories);
         }
 
     }
