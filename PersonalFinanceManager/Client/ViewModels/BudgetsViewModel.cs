@@ -28,7 +28,6 @@ namespace PersonalFinanceManager.Client.ViewModels
         private readonly CategoryManager _categoryManager;
         private readonly AddViewModel _addViewModel;
 
-        private IList<Budget> _budgets;
         private IList<Expense> _expenses;
 
         public BudgetsViewModel(HttpClient apiClient,
@@ -41,9 +40,9 @@ namespace PersonalFinanceManager.Client.ViewModels
         }
 
         public BarConfig Config { get; set; }
-
         public Chart Chart { get; set; }
-
+        public List<Budget> Budgets { get; set; } = new List<Budget>();
+        public string SelectedBudget { get; set; }
 
         public async Task OnInit()
         {
@@ -53,7 +52,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             {
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
                 {
-                    _budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
+                    Budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
                     _expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
                 }
             }
@@ -96,7 +95,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             for (int i = 0; i < Constants.MonthsInYear; i++)
             {
-                int budget = _budgets.FirstOrDefault().Amount;
+                int budget = Budgets.FirstOrDefault().Amount;
 
                 int expenseAmount = (int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
 
