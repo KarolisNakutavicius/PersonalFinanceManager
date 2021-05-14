@@ -59,7 +59,11 @@ namespace PersonalFinanceManager.Service.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<IList<Budget>>> GetAllBudgets()
         {
-            var budgets = await _context.Budgets.Where(b => b.Categories.Any(c => c.Statements.Any(s => s.UserId == _currentIdentity.GetUserId()))).ToListAsync();
+            var budgets = await _context.Budgets
+                .Include(b => b.Categories)
+                .ThenInclude(c => c.Statements)
+                .Where(b => b.Categories.Any(c => c.Statements.Any(s => s.UserId == _currentIdentity.GetUserId())))
+                .ToListAsync();
 
             if (budgets == null)
             {

@@ -25,24 +25,50 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class BudgetsViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
-        private readonly CategoryManager _categoryManager;
         private readonly AddViewModel _addViewModel;
 
-        private IList<Expense> _expenses;
+        private string _selectedBudgetName;
+        private List<Statement> _expenses = new List<Statement>();
 
         public BudgetsViewModel(HttpClient apiClient,
-            CategoryManager categoryManager,
             AddViewModel addViewModel)
         {
             _apiClient = apiClient;
-            _categoryManager = categoryManager;
             _addViewModel = addViewModel;
         }
 
         public BarConfig Config { get; set; }
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
-        public string SelectedBudget { get; set; }
+        public string SelectedBudgetName
+        {
+            get => _selectedBudgetName;
+            set
+            {
+                _selectedBudgetName = value;
+                _ = GetSelectedExpenses();
+            }
+        }
+
+        private async Task GetSelectedExpenses()
+        {
+            var selectedBudget = Budgets.FirstOrDefault(b => b.Name == SelectedBudgetName);
+
+            if (selectedBudget == null)
+            {
+                selectedBudget = Budgets.First();
+                SelectedBudgetName = selectedBudget.Name;
+            }
+
+            _expenses.Clear();
+
+            foreach(var category in selectedBudget.Categories)
+            {
+                _expenses.AddRange(category.Statements.ToList());
+            }
+
+            await GenerateBarChart();
+        }
 
         public async Task OnInit()
         {
@@ -53,7 +79,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
                 {
                     Budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
-                    _expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
+                    //_expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
                 }
             }
             catch (Exception ex)
@@ -61,7 +87,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 //do nothing
             }
 
-            await GenerateBarChart();
+            await GetSelectedExpenses();
         }
 
         private async Task GenerateBarChart()
