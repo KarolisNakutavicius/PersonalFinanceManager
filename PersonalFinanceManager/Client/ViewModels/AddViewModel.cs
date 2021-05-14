@@ -23,6 +23,8 @@ namespace PersonalFinanceManager.Client.ViewModels
         private string _newCategory;
         private StatementType _type;
 
+        public bool IsBudget { get; set; }
+
         [Required]
         public StatementType StatementType
         {
@@ -43,9 +45,6 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         [RequiredIf("IsBudget", false)]
         public string NewColorHex { get; set; }
-
-
-        public bool IsBudget { get; set; }
 
         public string NewCategory
         {
@@ -102,8 +101,8 @@ namespace PersonalFinanceManager.Client.ViewModels
                 {
                     ColorHex = NewColorHex,
                     Name = SelectedCategory != string.Empty ?
-                SelectedCategory :
-                NewCategory
+                           SelectedCategory :
+                           NewCategory
                 }
             };
 
