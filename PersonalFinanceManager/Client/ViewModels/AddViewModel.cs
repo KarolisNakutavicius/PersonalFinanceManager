@@ -44,6 +44,8 @@ namespace PersonalFinanceManager.Client.ViewModels
         public string NewColorHex { get; set; }
 
 
+        public bool IsBudget { get; set; }
+
         public string NewCategory
         {
             get => _newCategory;
@@ -59,7 +61,6 @@ namespace PersonalFinanceManager.Client.ViewModels
         }
 
         public string SelectedCategory { get; set; } = string.Empty;
-
 
         public event EventHandler OnAddSuccess;
 
@@ -133,7 +134,18 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         private async Task GetCategories()
         {
+            Categories.Clear();
+
             Categories = await _categoryManager.GetCategories(_type);
+            IsBudget = _type == StatementType.Budget;
+
+            if (IsBudget)
+            {
+                Categories.Add(new Category
+                {
+                    Name = "All categories"
+                });
+            }
         }
     }
 }
