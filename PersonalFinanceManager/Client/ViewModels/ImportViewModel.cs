@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using FileHelpers;
 using Microsoft.AspNetCore.Components.Forms;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Helpers.CSV.Models;
@@ -23,44 +24,19 @@ namespace PersonalFinanceManager.Client.ViewModels
         {
             var browserFile = eventArgs.File;
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            var engine = new FileHelperEngine(typeof(LuminorStatement));
+
+            using (var reader = new StreamReader(browserFile.OpenReadStream()))
             {
-                PrepareHeaderForMatch = args => args.Header.ToLower(),
-            };
+                string content = await reader.ReadToEndAsync();
 
+                var statements = engine.ReadStringAsList(content);
 
-            //The following approach is NOT recommended because the file's Stream content is read into a String in memory (reader):
-            //    https://docs.microsoft.com/en-us/aspnet/core/blazor/file-uploads?view=aspnetcore-5.0&pivots=webassembly
-
-            //using (var reader = new StreamReader(browserFile.Ope()))
-            //using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            //{
-            //    var statements = csv.GetRecords<LuminorStatement>().ToList();
-
-            //    foreach (var statement in statements)
-            //    {
-            //        Debug.WriteLine(statement.Amount);
-            //    }
-            //}
-
-            using (var stream2 = new MemoryStream())
-            {
-                await browserFile.OpenReadStream().CopyToAsync(stream2);   // although file.Data is itself a stream, using it directly causes "synchronous reads are not supported" errors below.
-                stream2.Seek(0, SeekOrigin.Begin);      // at the end of the copy method, we are at the end of both the input and output stream and need to reset the one we want to work with.
-                var reader = new System.IO.StreamReader(stream2);
-
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                foreach (var statement in statements)
                 {
-                    var statements = csv.GetRecords<LuminorStatement>().ToList();
-
-                    foreach (var statement in statements)
-                    {
-                        Debug.WriteLine(statement.Amount);
-                    }
+                    Debug.WriteLine(((LuminorStatement)statement).Amount);
                 }
             }
-
-
 
         }
     }
