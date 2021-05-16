@@ -1,4 +1,5 @@
 ﻿using FileHelpers;
+using System;
 
 namespace PersonalFinanceManager.Client.Helpers.CSV.Models
 {
@@ -7,15 +8,20 @@ namespace PersonalFinanceManager.Client.Helpers.CSV.Models
     {
         public string TransactionType { get; set; }
 
-        public string Date { get; set; }
+        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        //[FieldConverter(ConverterKind.Date, "yyyyMMdd")]
+        public DateTime Date { get; set; }
 
         public string Time { get; set; }
 
-        public string Amount { get; set; }
+        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        public float Amount { get; set; }
 
         public string Equivalent { get; set; }
 
-        public string CD { get; set; }
+        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        //[FieldConverter(typeof(IsExpenseConverter))]
+        public bool IsExpense { get; set; }
 
         public string OrigAmount { get; set; }
 

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Shared\PersonalFinanceManager.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\CSV\Models\" />
+  </ItemGroup>
+
 </Project>

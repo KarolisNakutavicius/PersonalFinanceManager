@@ -8,9 +8,9 @@ namespace PersonalFinanceManager.Client.Helpers.CSV
 {
     public class IsExpenseConverter : ConverterBase
     {
-        public override object StringToField(string @from)
+        public override object StringToField(string from)
         {
-            return @from == "C";
+            return from == "D";
         }
     }
 }
