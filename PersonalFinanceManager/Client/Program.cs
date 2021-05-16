@@ -11,6 +11,11 @@ namespace PersonalFinanceManager.Client
     {
         public static async Task Main(string[] args)
         {
+
+#if DEBUG
+            await Task.Delay(5000);
+#endif
+
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
