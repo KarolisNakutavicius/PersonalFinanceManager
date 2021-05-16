@@ -3,5 +3,41 @@
 
 <h4>Import csv file</h4>
 <br />
-<InputFile OnChange="ViewModel.OnFileImported">Import csv</InputFile>
+<InputFile OnChange="ViewModel.OnFileAdded">Import csv</InputFile>
+<br />
+@if (ViewModel.IsAnyStatements)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Details</th>
+                <th scope="col">Type</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var statement in ViewModel.Statements)
+            {
+                <tr>
+                    <td>@statement.Details</td>
+                    @if (statement.IsExpense)
+                    {
+                        <td>Expense</td>
+                    }
+                    @if (!statement.IsExpense)
+                    {
+                        <td>Income</td>
+                    }
+                    <td>@statement.Amount €</td>
+                    <td>@statement.Date.ToString("MM/dd/yyyy")</td>
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <button @onclick="ViewModel.Import" class="btn btn-primary">Import</button>
+}
 

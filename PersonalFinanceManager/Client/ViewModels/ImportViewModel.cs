@@ -20,7 +20,11 @@ namespace PersonalFinanceManager.Client.ViewModels
         {
         }
 
-        public async Task OnFileImported(InputFileChangeEventArgs eventArgs)
+        public List<LuminorStatement> Statements { get; set; } = new List<LuminorStatement>();
+
+        public bool IsAnyStatements;
+
+        public async Task OnFileAdded(InputFileChangeEventArgs eventArgs)
         {
             var browserFile = eventArgs.File;
 
@@ -34,9 +38,19 @@ namespace PersonalFinanceManager.Client.ViewModels
 
                 foreach (var statement in statements)
                 {
-                    Debug.WriteLine(((LuminorStatement)statement).Amount);
+                    Statements.Add((LuminorStatement)statement);
                 }
             }
+
+            if(Statements.Count != 0)
+            {
+                IsAnyStatements = true;
+            }
+
+        }
+
+        public async Task Import()
+        {
 
         }
     }

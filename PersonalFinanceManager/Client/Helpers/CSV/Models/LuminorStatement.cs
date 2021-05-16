@@ -35,6 +35,7 @@ namespace PersonalFinanceManager.Client.Helpers.CSV.Models
 
         public string PaymentCode { get; set; }
 
+        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
         public string Details { get; set; }
 
         public string BIC { get; set; }
