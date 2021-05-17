@@ -95,11 +95,11 @@ namespace PersonalFinanceManager.Service.Controllers
         {
             expense.UserId = _currentIdentity.GetUserId();
 
-            var category = _context.Categories.Include(c => c.Statements).FirstOrDefault(c => c.Statements.Any(s => s.UserId.Equals(expense.UserId)) && c.Name.Equals(expense.Category.Name));
+            var category = _context.Categories.Include(c => c.Statements)
+                .FirstOrDefault(c => c.Statements.Any(s => s.UserId.Equals(expense.UserId)) && c.Name.Equals(expense.Category.Name));
 
             if(category != null)
             {
-                //category.ColorHex = expense.Category.ColorHex;
                 expense.Category = category;
             }
 
