@@ -49,8 +49,6 @@ namespace PersonalFinanceManager.Client.ViewModels
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
 
-        public ElementReference SelectedRef;
-
         public event EventHandler ChangeState;
 
         public string SelectedBudgetName
