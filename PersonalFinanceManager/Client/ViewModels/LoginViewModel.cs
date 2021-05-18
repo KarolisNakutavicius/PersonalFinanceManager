@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Shared.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Client.ViewModels
@@ -23,6 +24,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public string Error { get; set; }
 
+        public event EventHandler ChangeState;
         public async Task OnInit()
         {
             LoginModel = new LoginModel();

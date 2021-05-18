@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@ namespace PersonalFinanceManager.Client.ViewModels
         public IEnumerable<string> Errors { get; set; } = new List<string>();
 
         public RegisterModel RegisterModel = new RegisterModel();
+
+        public event EventHandler ChangeState;
 
         public async Task OnInit()
         {

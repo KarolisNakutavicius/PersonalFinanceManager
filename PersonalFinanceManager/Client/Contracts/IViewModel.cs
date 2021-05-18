@@ -8,5 +8,7 @@ namespace PersonalFinanceManager.Client.Contracts
     public interface IViewModel
     {
         Task OnInit();
+
+        event EventHandler ChangeState;
     }
 }

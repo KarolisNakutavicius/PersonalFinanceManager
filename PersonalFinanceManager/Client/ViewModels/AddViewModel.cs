@@ -69,6 +69,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public event EventHandler OpenRequested;
 
+        public Action<Budget> OnBudgetAdded;
+
         public IList<Category> Categories { get; set; } = new List<Category>();
 
         public AddViewModel(HttpClient apiClient, CategoryManager categoryManager)
@@ -79,6 +81,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task OnInit()
         {}
+
+        public event EventHandler ChangeState;
 
         public async Task Add()
         {
@@ -142,6 +146,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 if (result.IsSuccessStatusCode)
                 {
                     this.OnAddSuccess?.Invoke(this, EventArgs.Empty);
+                    this.OnBudgetAdded(newBudget);
                 }
             }
         }
@@ -151,6 +156,8 @@ namespace PersonalFinanceManager.Client.ViewModels
             StatementType = type;            
             Date = DateTime.Now;
             NewColorHex = Constants.DefaultColorHex;
+            Value = 0;
+
             await GetCategories();
             OnSelectionChanged();
             this.OpenRequested?.Invoke(this, EventArgs.Empty);

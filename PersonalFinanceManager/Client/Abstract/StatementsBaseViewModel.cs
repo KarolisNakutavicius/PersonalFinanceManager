@@ -80,6 +80,7 @@ namespace PersonalFinanceManager.Client.Abstract
             await _addViewModel.Open(Type);
         }
 
+        public event EventHandler ChangeState;
         public async Task OnInit()
         {
             Config = new PieConfig

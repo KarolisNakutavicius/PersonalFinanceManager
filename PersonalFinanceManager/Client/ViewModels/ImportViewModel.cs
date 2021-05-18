@@ -5,6 +5,7 @@ using PersonalFinanceManager.Client.Helpers.CSV.Models;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -31,6 +32,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public string Title { get; set; } = "Import csv file";
 
+        public event EventHandler ChangeState;
         public async Task OnInit()
         {
         }

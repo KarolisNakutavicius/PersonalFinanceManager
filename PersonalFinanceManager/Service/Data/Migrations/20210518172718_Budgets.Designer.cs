@@ -10,7 +10,7 @@ using PersonalFinanceManager.Server.Contexts;
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
     [DbContext(typeof(FinanceManagerContext))]
-    [Migration("20210518154600_Budgets")]
+    [Migration("20210518172718_Budgets")]
     partial class Budgets
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
