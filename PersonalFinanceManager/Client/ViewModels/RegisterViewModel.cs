@@ -34,9 +34,9 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             var result = await _authService.Register(RegisterModel);
 
-            if (result.Successful)
+            if (result.Success)
             {
-                _navigationManager.NavigateTo("/login");
+                _navigationManager.NavigateTo("/");
             }
             else
             {
