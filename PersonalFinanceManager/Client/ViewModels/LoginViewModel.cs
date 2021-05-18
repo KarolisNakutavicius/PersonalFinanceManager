@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PersonalFinanceManager.Client.ViewModels
@@ -20,14 +17,17 @@ namespace PersonalFinanceManager.Client.ViewModels
             _navigationManager = navigationManager;
         }
 
-        public LoginModel LoginModel = new LoginModel();
+        public LoginModel LoginModel { get; set; }
 
-        public bool ShowErrors;
-        public string Error = "";
+        public bool ShowErrors { get; set; }
+
+        public string Error { get; set; }
 
         public async Task OnInit()
         {
-
+            LoginModel = new LoginModel();
+            ShowErrors = false;
+            Error = string.Empty;
         }
 
         public async Task HandleLogin()
@@ -39,12 +39,12 @@ namespace PersonalFinanceManager.Client.ViewModels
             if (result.Successful)
             {
                 _navigationManager.NavigateTo("/");
+                return;
             }
-            else
-            {
-                Error = result.Error;
-                ShowErrors = true;
-            }
+
+            Error = result.Error;
+            ShowErrors = true;
+
         }
     }
 }

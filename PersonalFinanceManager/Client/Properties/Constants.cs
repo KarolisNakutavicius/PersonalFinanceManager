@@ -12,6 +12,8 @@ namespace PersonalFinanceManager.Client.Properties
 
         public const int MonthsInYear = 12;
 
+        public const int AuthenticationDelay = 1000;
+
         public static IReadOnlyList<string> Months { get; } = new ReadOnlyCollection<string>(new[]
         {
             "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"

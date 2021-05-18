@@ -8,11 +8,9 @@ using ChartJs.Blazor.Util;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
-using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
@@ -50,8 +48,18 @@ namespace PersonalFinanceManager.Client.ViewModels
             }
         }
 
+        public string Title { get; set; }
+
         private async Task GetSelectedExpenses()
         {
+            if (Budgets.Count == 0)
+            {
+                Title = "You don't have any budgets";
+                return;
+            }
+
+            Title = "Your selected budgets";
+
             var selectedBudget = Budgets.FirstOrDefault(b => b.Name == SelectedBudgetName);
 
             if (selectedBudget == null)
@@ -72,6 +80,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task OnInit()
         {
+            Budgets.Clear();
             InitializeBarConfig();
 
             try
@@ -79,7 +88,6 @@ namespace PersonalFinanceManager.Client.ViewModels
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
                 {
                     Budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
-                    //_expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
                 }
             }
             catch (Exception ex)

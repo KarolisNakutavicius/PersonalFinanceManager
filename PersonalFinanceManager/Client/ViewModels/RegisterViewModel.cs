@@ -11,21 +11,21 @@ namespace PersonalFinanceManager.Client.ViewModels
         private readonly IAuthService _authService;
         private readonly NavigationManager _navigationManager;
 
-        public bool ShowErrors;
-        public IEnumerable<string> Errors;
-
         public RegisterViewModel(IAuthService authService,
             NavigationManager navigationManager)
         {
             _authService = authService;
             _navigationManager = navigationManager;
         }
+        public bool ShowErrors { get; set; }
+        public IEnumerable<string> Errors { get; set; } = new List<string>();
 
         public RegisterModel RegisterModel = new RegisterModel();
 
         public async Task OnInit()
         {
-
+            RegisterModel = new RegisterModel();
+            ShowErrors = false;
         }
 
         public async Task HandleRegistration()
@@ -37,12 +37,11 @@ namespace PersonalFinanceManager.Client.ViewModels
             if (result.Success)
             {
                 _navigationManager.NavigateTo("/");
+                return;
             }
-            else
-            {
-                Errors = result.Errors;
-                ShowErrors = true;
-            }
+
+            Errors = result.Errors;
+            ShowErrors = true;
         }
     }
 }
