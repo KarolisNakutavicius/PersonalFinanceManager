@@ -144,6 +144,8 @@ namespace PersonalFinanceManager.Client.Abstract
                 return;
             }
             Title = $"Your total {Type.GetDescription()} : {amount}";
+
+            this.ChangeState.Invoke(this, EventArgs.Empty);
         }
 
     }
