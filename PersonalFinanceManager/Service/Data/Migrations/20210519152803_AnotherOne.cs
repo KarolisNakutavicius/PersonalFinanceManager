@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
-    public partial class Budgets : Migration
+    public partial class AnotherOne : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

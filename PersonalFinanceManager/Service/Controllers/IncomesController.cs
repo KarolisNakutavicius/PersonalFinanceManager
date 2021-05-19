@@ -94,6 +94,14 @@ namespace PersonalFinanceManager.Server.Controllers
         {
             income.UserId = _currentIdentity.GetUserId();
 
+            var category = _context.Categories.Include(c => c.Statements)
+                .FirstOrDefault(c => c.Statements.Any(s => s.UserId.Equals(income.UserId)) && c.Name.Equals(income.Category.Name));
+
+            if (category != null)
+            {
+                income.Category = category;
+            }
+
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
 
