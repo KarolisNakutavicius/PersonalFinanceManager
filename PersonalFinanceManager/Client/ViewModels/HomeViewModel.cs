@@ -38,6 +38,9 @@ namespace PersonalFinanceManager.Client.ViewModels
         public event EventHandler ChangeState;
         public async Task OnInit()
         {
+            _expenses.Clear();
+            _incomes.Clear();
+
             Config = new BarConfig
             {
                 Options = new BarOptions
