@@ -5,6 +5,7 @@ using PersonalFinanceManager.Client.Helpers.CSV.Models;
 using PersonalFinanceManager.Client.Properties;
 using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -31,6 +32,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public string Title { get; set; } = "Import csv file";
 
+        public event EventHandler ChangeState;
         public async Task OnInit()
         {
         }
@@ -68,22 +70,26 @@ namespace PersonalFinanceManager.Client.ViewModels
                 {
                     Amount = csvStatement.Amount,
                     DateTime = csvStatement.Date,
-                    Category = new Category
-                    {
-                        Name = "Other"
-                    }
                 };
 
                 string requestUri = string.Empty;
 
                 if (csvStatement.IsExpense)
                 {
-                    apiStatement.Category.ColorHex = "#FF0000"; // red hex
+                    apiStatement.Category = new Category
+                    {
+                        Name = "Expense",
+                        ColorHex = "#FF0000" // red hex
+                    };
                     requestUri = "Expenses";
                 }
                 else
                 {
-                    apiStatement.Category.ColorHex = "#008000"; // green hex
+                    apiStatement.Category = new Category
+                    {
+                        Name = "Income",
+                        ColorHex = "#008000" // green hex
+                    };
                     requestUri = "Incomes";
                 }
 

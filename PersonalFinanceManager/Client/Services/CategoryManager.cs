@@ -1,4 +1,6 @@
-﻿using PersonalFinanceManager.Client.Enums;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using PersonalFinanceManager.Client.Authentication;
+using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.ViewModels;
 using PersonalFinanceManager.Shared.Models;
 using System;
@@ -14,6 +16,7 @@ namespace PersonalFinanceManager.Client.Services
     public class CategoryManager
     {
         private readonly HttpClient _apiClient;
+        private readonly AuthenticationStateProvider _apiAuthenticationStateProvider;
 
         private SemaphoreSlim _categorySemaphore = new SemaphoreSlim(1, 1);
 
@@ -22,19 +25,23 @@ namespace PersonalFinanceManager.Client.Services
 
         public event EventHandler CategoryUpdated;
 
-        public CategoryManager(HttpClient apiClient)
+        public CategoryManager(HttpClient apiClient,
+            AuthenticationStateProvider apiAuthenticationStateProvider)
         {
             _apiClient = apiClient;
+            _apiAuthenticationStateProvider = apiAuthenticationStateProvider;
+
+            _apiAuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationChanged;
 
             _ = GetAllCategories();
         }
 
         public async Task GetAllCategories()
         {
-            await _categorySemaphore.WaitAsync();
-
             try
             {
+                await _categorySemaphore.WaitAsync();
+
                 _expenseCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Expenses/Categories");
                 _incomeCategories = await _apiClient.GetFromJsonAsync<List<Category>>($"Incomes/Categories");
             }
@@ -75,5 +82,18 @@ namespace PersonalFinanceManager.Client.Services
             return new List<Category>(categories);
         }
 
+        private async void OnAuthenticationChanged(Task<AuthenticationState> task)
+        {
+            var authState = await task;
+
+            if (authState.User.Identity?.IsAuthenticated == false)
+            {
+                _expenseCategories.Clear();
+                _incomeCategories.Clear();
+                return;
+            }
+
+            await GetAllCategories();
+        }
     }
 }

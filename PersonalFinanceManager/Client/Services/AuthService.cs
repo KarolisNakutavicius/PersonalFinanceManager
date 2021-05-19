@@ -32,14 +32,29 @@ namespace PersonalFinanceManager.Client.Services
         {
             var result = await _httpClient.PostJsonAsync<RegisterResult>("Users", registerModel);
 
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            await _localStorage.SetItemAsync("authToken", result.Token);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(registerModel.Email);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
+
             return result;
         }
 
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
             var loginAsJson = JsonSerializer.Serialize(loginModel);
+
             var response = await _httpClient.PostAsync("Token", new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
-            var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions 
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
             if (!response.IsSuccessStatusCode)
             {
@@ -47,8 +62,9 @@ namespace PersonalFinanceManager.Client.Services
             }
 
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
-            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
+
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
 
             return loginResult;
         }

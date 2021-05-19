@@ -35,8 +35,12 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         private IList<IncomeModel> _incomes = new List<IncomeModel>();
 
+        public event EventHandler ChangeState;
         public async Task OnInit()
         {
+            _expenses.Clear();
+            _incomes.Clear();
+
             Config = new BarConfig
             {
                 Options = new BarOptions

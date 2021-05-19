@@ -5,6 +5,10 @@
 
 <div class="container-fluid">
 
+    <div class="row mt-3 justify-content-center">
+        <h2>@ViewModel.Title</h2>
+    </div>
+
     @if (ViewModel.Budgets.Count > 0)
     {
         <div class="row mt-3">
@@ -16,12 +20,6 @@
                     <option value="@budget.Name">@budget.Name</option>
                 }
             </select>
-        </div>
-    }
-    @if (ViewModel.Budgets.Count == 0)
-    {
-        <div class="row mt-3 justify-content-center">
-            <h1>You don't have any budgets</h1>
         </div>
     }
 

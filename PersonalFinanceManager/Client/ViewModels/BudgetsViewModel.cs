@@ -5,14 +5,14 @@ using ChartJs.Blazor.Common;
 using ChartJs.Blazor.Common.Axes;
 using ChartJs.Blazor.Common.Enums;
 using ChartJs.Blazor.Util;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Enums;
 using PersonalFinanceManager.Client.Properties;
-using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
@@ -26,20 +26,31 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
         private readonly AddViewModel _addViewModel;
+        private readonly NavigationManager _navigationManager;
+        private readonly IJSRuntime _jSRuntime;
 
         private string _selectedBudgetName;
         private List<Statement> _expenses = new List<Statement>();
 
         public BudgetsViewModel(HttpClient apiClient,
-            AddViewModel addViewModel)
+            AddViewModel addViewModel,
+            NavigationManager navigationManager,
+            IJSRuntime jSRuntime)
         {
             _apiClient = apiClient;
             _addViewModel = addViewModel;
+            _navigationManager = navigationManager;
+            _jSRuntime = jSRuntime;
+
+            _addViewModel.OnBudgetAdded = OnBudgetAdded;
         }
 
         public BarConfig Config { get; set; }
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
+
+        public event EventHandler ChangeState;
+
         public string SelectedBudgetName
         {
             get => _selectedBudgetName;
@@ -50,8 +61,38 @@ namespace PersonalFinanceManager.Client.ViewModels
             }
         }
 
+        public string Title { get; set; }
+
+        public async Task OnInit()
+        {
+            Budgets.Clear();
+            InitializeBarConfig();
+
+            try
+            {
+                using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
+                {
+                    Budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
+                }
+            }
+            catch (Exception ex)
+            {
+                //do nothing
+            }
+
+            await GetSelectedExpenses();
+        }
+
         private async Task GetSelectedExpenses()
         {
+            if (Budgets.Count == 0)
+            {
+                Title = "You don't have any budgets";
+                return;
+            }
+
+            Title = "Your selected budgets";
+
             var selectedBudget = Budgets.FirstOrDefault(b => b.Name == SelectedBudgetName);
 
             if (selectedBudget == null)
@@ -62,32 +103,12 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             _expenses.Clear();
 
-            foreach(var category in selectedBudget.Categories)
+            foreach (var category in selectedBudget.Categories)
             {
                 _expenses.AddRange(category.Statements.ToList());
             }
 
             await GenerateBarChart();
-        }
-
-        public async Task OnInit()
-        {
-            InitializeBarConfig();
-
-            try
-            {
-                using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
-                {
-                    Budgets = await _apiClient.GetFromJsonAsync<List<Budget>>($"Budgets/all", cts.Token);
-                    //_expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
-                }
-            }
-            catch (Exception ex)
-            {
-                //do nothing
-            }
-
-            await GetSelectedExpenses();
         }
 
         private async Task GenerateBarChart()
@@ -121,7 +142,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             for (int i = 0; i < Constants.MonthsInYear; i++)
             {
-                int budget = Budgets.FirstOrDefault().Amount;
+                int budget = Budgets.Where(b => b.Name == SelectedBudgetName).FirstOrDefault().Amount;
 
                 int expenseAmount = (int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
 
@@ -152,6 +173,14 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task Add()
             => await _addViewModel.Open(StatementType.Budget);
+
+        private void OnBudgetAdded(Budget newBudget)
+        {            
+            Budgets.Insert(0, newBudget);
+            Title = "Your selected budgets";
+            this.ChangeState.Invoke(this, EventArgs.Empty);
+            _ = GetSelectedExpenses();
+        }
 
         private void InitializeBarConfig()
         {

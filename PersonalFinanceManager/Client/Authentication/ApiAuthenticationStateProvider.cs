@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using PersonalFinanceManager.Client.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,31 +22,50 @@ namespace PersonalFinanceManager.Client.Authentication
             _httpClient = httpClient;
             _localStorage = localStorage;
         }
+
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
 
-            if (string.IsNullOrWhiteSpace(savedToken))
+            if (string.IsNullOrWhiteSpace(savedToken) || savedToken == "null")
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt"));
+            
+            _ = MarkUserAsAuthenticatedFromStorage(principal);
+
+            return new AuthenticationState(principal);
         }
 
         public void MarkUserAsAuthenticated(string email)
         {
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, email) }, "apiauth"));
+
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+
             NotifyAuthenticationStateChanged(authState);
         }
 
         public void MarkUserAsLoggedOut()
         {
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
+
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
+
+            NotifyAuthenticationStateChanged(authState);
+        }
+
+        private async Task MarkUserAsAuthenticatedFromStorage(ClaimsPrincipal principal)
+        {
+            var authState = Task.FromResult(new AuthenticationState(principal));
+
+            // not all instances might be initialized. So we need to delay notify
+            await Task.Delay(Constants.AuthenticationDelay);
+
             NotifyAuthenticationStateChanged(authState);
         }
 

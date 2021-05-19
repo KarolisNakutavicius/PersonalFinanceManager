@@ -8,7 +8,9 @@ namespace PersonalFinanceManager.Shared.Responses
 {
     public class RegisterResult
     {
-        public bool Successful { get; set; }
+        public bool Success { get; set; }
         public IEnumerable<string> Errors { get; set; }
+
+        public string Token { get; set; }
     }
 }

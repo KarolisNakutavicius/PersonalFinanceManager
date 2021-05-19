@@ -12,6 +12,7 @@ namespace PersonalFinanceManager.Components.ViewModels
         protected override async Task OnInitializedAsync()
         {
             await ViewModel.OnInit();
+            ViewModel.ChangeState += (s, e) => StateHasChanged();
         }
 
         public abstract T ViewModel { get; set; }

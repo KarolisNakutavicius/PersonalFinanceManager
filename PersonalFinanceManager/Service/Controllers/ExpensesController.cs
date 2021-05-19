@@ -98,7 +98,7 @@ namespace PersonalFinanceManager.Service.Controllers
             var category = _context.Categories.Include(c => c.Statements)
                 .FirstOrDefault(c => c.Statements.Any(s => s.UserId.Equals(expense.UserId)) && c.Name.Equals(expense.Category.Name));
 
-            if(category != null)
+            if (category != null)
             {
                 expense.Category = category;
             }
