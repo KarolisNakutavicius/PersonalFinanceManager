@@ -26,21 +26,15 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
         private readonly AddViewModel _addViewModel;
-        private readonly NavigationManager _navigationManager;
-        private readonly IJSRuntime _jSRuntime;
 
         private string _selectedBudgetName;
         private List<Statement> _expenses = new List<Statement>();
 
         public BudgetsViewModel(HttpClient apiClient,
-            AddViewModel addViewModel,
-            NavigationManager navigationManager,
-            IJSRuntime jSRuntime)
+            AddViewModel addViewModel)
         {
             _apiClient = apiClient;
             _addViewModel = addViewModel;
-            _navigationManager = navigationManager;
-            _jSRuntime = jSRuntime;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
         }
