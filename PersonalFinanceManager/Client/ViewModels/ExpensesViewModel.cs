@@ -8,7 +8,9 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         public override StatementType Type => StatementType.Expense;
 
-        public ExpensesViewModel(CategoryManager categoryManager, AddViewModel addViewModel) : base(addViewModel, categoryManager)
+        public ExpensesViewModel(CategoryManager categoryManager,
+            AddViewModel addViewModel,
+            EditCategoriesViewModel editCategoriesViewModel) : base(addViewModel, categoryManager, editCategoriesViewModel)
         {
         }
     }

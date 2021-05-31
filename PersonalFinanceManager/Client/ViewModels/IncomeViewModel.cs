@@ -18,7 +18,9 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class IncomeViewModel : StatementsBaseViewModel
     {
         public override StatementType Type => StatementType.Income;
-        public IncomeViewModel(AddViewModel addViewModel, CategoryManager categoryManager) : base(addViewModel, categoryManager)
+        public IncomeViewModel(CategoryManager categoryManager,
+            AddViewModel addViewModel,
+            EditCategoriesViewModel editCategoriesViewModel) : base(addViewModel, categoryManager, editCategoriesViewModel)
         {
         }
     }

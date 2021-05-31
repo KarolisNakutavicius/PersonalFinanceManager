@@ -21,16 +21,21 @@ namespace PersonalFinanceManager.Client.Abstract
     public abstract class StatementsBaseViewModel : IViewModel
     {
         private readonly AddViewModel _addViewModel;
+        private readonly EditCategoriesViewModel _editCategoriesViewModel;
         private readonly CategoryManager _categoryManager;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
         private IList<Category> _sortedCategories;
 
-        public StatementsBaseViewModel(AddViewModel addViewModel, CategoryManager categoryManager)
+        public StatementsBaseViewModel(AddViewModel addViewModel,
+            CategoryManager categoryManager,
+            EditCategoriesViewModel editCategoriesViewModel)
         {
             _addViewModel = addViewModel;
             _categoryManager = categoryManager;
-            _categoryManager.CategoryUpdated += (s, e) => GeneratePie();
+            _editCategoriesViewModel = editCategoriesViewModel;
+
+            _categoryManager.CategoryUpdated += (s, e) => _ = GeneratePie();
         }
 
         public string Title { get; set; }
@@ -134,6 +139,9 @@ namespace PersonalFinanceManager.Client.Abstract
                 //do nothin
             }         
         }
+
+        public async Task EditCategories()
+            => await _editCategoriesViewModel.Open(Type);
 
         private void UpdateTitle()
         {

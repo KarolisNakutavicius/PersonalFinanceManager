@@ -31,6 +31,7 @@ namespace PersonalFinanceManager.Client.Services
             services.AddScoped<BudgetsViewModel>();
             services.AddScoped<AddViewModel>();
             services.AddScoped<ImportViewModel>();
+            services.AddScoped<EditCategoriesViewModel>();
         }
     }
 }
