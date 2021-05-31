@@ -14,10 +14,14 @@
         <div class="row mt-3">
             <div class="col-lg-1 col-3">From :</div>
             <InputDate class="col-xl-2 col-md-3 col-6" type="date" @bind-Value="ViewModel.DateFrom"></InputDate>
-            <div class="col">
-                <button class="float-right btn-secondary" @onclick="ViewModel.EditCategories">Edit Categories</button>
-            </div>
-            
+
+            @if (ViewModel.SortedCategories.Count > 0)
+            {
+                <div class="col">
+                    <button class="float-right btn-secondary" @onclick="ViewModel.EditCategories">Edit Categories</button>
+                </div>
+            }
+
         </div>
         <div class="row">
             <div class="col-lg-1 col-3">To :</div>
