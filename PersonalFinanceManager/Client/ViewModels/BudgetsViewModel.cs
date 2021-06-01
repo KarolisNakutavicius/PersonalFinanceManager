@@ -26,15 +26,18 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
         private readonly AddViewModel _addViewModel;
+        private readonly EditBudgetViewModel _editBudgetViewModel;
 
         private string _selectedBudgetName;
         private List<Statement> _expenses = new List<Statement>();
 
         public BudgetsViewModel(HttpClient apiClient,
-            AddViewModel addViewModel)
+            AddViewModel addViewModel,
+            EditBudgetViewModel editBudgetViewModel)
         {
             _apiClient = apiClient;
             _addViewModel = addViewModel;
+            _editBudgetViewModel = editBudgetViewModel;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
         }
@@ -167,6 +170,9 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task Add()
             => await _addViewModel.Open(StatementType.Budget);
+
+        public async Task EditBudgets()
+            => await _editBudgetViewModel.Open(); 
 
         private void OnBudgetAdded(Budget newBudget)
         {            

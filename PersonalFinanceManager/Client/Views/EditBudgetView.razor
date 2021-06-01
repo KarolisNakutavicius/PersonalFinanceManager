@@ -1,10 +1,10 @@
-﻿@inherits EditCategoriesComponent
+﻿@inherits EditBudgetComponent
 
 <div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Edit Categories</h2>
+                <h2>Edit Budgets</h2>
             </div>
 
             <div class="modal-body">
@@ -18,21 +18,35 @@
             <div class="container" style="padding: 20px;">
 
                 <div class="row justify-content-start ml-n4">
-                    <h5 class="col-5 float-left">Category Name</h5>
+                    <label class="col-3 float-left">Name</label>
+                    <label class="col-2 float-left">Amount</label>
+                    <label class="col-2">Category</label>
                 </div>
 
-                @foreach (var category in ViewModel.Categories)
+                @foreach (var budget in ViewModel.Budgets)
                 {
-                    <div class="row">
-                        <input type="text" class="col-5" @bind-value="@category.Name">
-                        <div class="col"></div>
-                        <button type="button" class="col-1 mr-2 btn btn-primary" @onclick="() => ViewModel.RenameCategory(category)">
-                            <span class="oi oi-check"></span>
-                        </button>
-                        <button type="button" class="col-1 btn btn-secondary" @onclick="() => ViewModel.DeleteCategory(category)">
-                            <span class="oi oi-trash"></span>
-                        </button>
-                    </div>
+            <EditForm Model="budget">
+                <div class="row">
+                    <input type="text" class="col-3" @bind-value="@budget.Name">
+                    <input type="number" class="col-2 ml-1" min="1" step="any" @bind-value="budget.Amount" />
+
+                    <InputSelect @bind-Value="ViewModel.SelectedCategory" class="col mx-1">
+                        @foreach (var category in budget.Categories)
+                            {
+                            <option value="@category.Name">@category.Name</option>
+                            }
+                    </InputSelect>
+
+                    <button type="button" class="col-1 mr-2 btn btn-primary"
+                            @onclick="() => ViewModel.ModifyBudget(budget)">
+                        <span class="oi oi-check"></span>
+                    </button>
+                    <button type="button" class="col-1 btn btn-secondary"
+                            @onclick="() => ViewModel.DeleteBudget(budget)">
+                        <span class="oi oi-trash"></span>
+                    </button>
+                </div>
+            </EditForm>
                 }
 
             </div>

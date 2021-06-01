@@ -21,13 +21,21 @@
                 }
             </select>
         </div>
+
+        <div class="row mt-1">
+            <div class="col-4">
+                <button class="float-left btn-secondary" @onclick="ViewModel.EditBudgets">Edit Budgets</button>
+            </div>
+        </div>
     }
 
 
-    <div class="row mt-3">
+    <div class="row mt-3" style="height:100px">
         <Chart Config="ViewModel.Config" @ref="ViewModel.Chart"></Chart>
     </div>
 
 </div>
 
 <button class="plus-button" @onclick="ViewModel.Add"></button>
+
+<EditBudgetView></EditBudgetView>
