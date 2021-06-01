@@ -40,6 +40,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             _editBudgetViewModel = editBudgetViewModel;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
+            _editBudgetViewModel.BudgetModified += (s, e) => _ = OnInit();
         }
 
         public BarConfig Config { get; set; }

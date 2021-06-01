@@ -17,9 +17,13 @@
 
             <div class="container" style="padding: 20px;">
 
-                <div class="row justify-content-start ml-n4">
-                    <h5 class="col-5 float-left">Category Name</h5>
-                </div>
+                @if (ViewModel.Categories.Count > 0)
+                {
+                    <div class="row justify-content-start ml-n4">
+                        <h5 class="col-5 float-left">Category Name</h5>
+                    </div>
+                }
+
 
                 @foreach (var category in ViewModel.Categories)
                 {

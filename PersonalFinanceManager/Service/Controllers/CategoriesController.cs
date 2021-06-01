@@ -106,5 +106,6 @@ namespace PersonalFinanceManager.Service.Controllers
         {
             return _context.Categories.Any(e => e.CategoryId == id);
         }
+
     }
 }
