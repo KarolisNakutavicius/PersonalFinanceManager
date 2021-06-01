@@ -1,0 +1,84 @@
+﻿@inherits EditCategoriesComponent
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Categories</h2>
+            </div>
+
+            <div class="modal-body">
+                @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewModel.ErrorMessage
+                    </div>
+                }
+
+            <div class="container" style="padding: 20px;">
+
+                @if (ViewModel.Categories.Count > 0)
+                {
+                    <div class="row justify-content-start ml-n4">
+                        <h5 class="col-5 float-left">Category Name</h5>
+                    </div>
+                }
+
+
+                @foreach (var category in ViewModel.Categories)
+                {
+                    <div class="row">
+                        <input type="text" class="col-5" @bind-value="@category.Name">
+                        <div class="col"></div>
+                        <button type="button" class="col-1 mr-2 btn btn-primary" @onclick="() => ViewModel.RenameCategory(category)">
+                            <span class="oi oi-check"></span>
+                        </button>
+                        <button type="button" class="col-1 btn btn-secondary" @onclick="() => ViewModel.DeleteCategory(category)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                }
+
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.OpenRequested += (s, e) => Open();
+    }
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}

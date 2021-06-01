@@ -26,23 +26,21 @@ namespace PersonalFinanceManager.Client.ViewModels
     {
         private readonly HttpClient _apiClient;
         private readonly AddViewModel _addViewModel;
-        private readonly NavigationManager _navigationManager;
-        private readonly IJSRuntime _jSRuntime;
+        private readonly EditBudgetViewModel _editBudgetViewModel;
 
         private string _selectedBudgetName;
         private List<Statement> _expenses = new List<Statement>();
 
         public BudgetsViewModel(HttpClient apiClient,
             AddViewModel addViewModel,
-            NavigationManager navigationManager,
-            IJSRuntime jSRuntime)
+            EditBudgetViewModel editBudgetViewModel)
         {
             _apiClient = apiClient;
             _addViewModel = addViewModel;
-            _navigationManager = navigationManager;
-            _jSRuntime = jSRuntime;
+            _editBudgetViewModel = editBudgetViewModel;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
+            _editBudgetViewModel.BudgetModified += (s, e) => _ = OnInit();
         }
 
         public BarConfig Config { get; set; }
@@ -173,6 +171,9 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task Add()
             => await _addViewModel.Open(StatementType.Budget);
+
+        public async Task EditBudgets()
+            => await _editBudgetViewModel.Open(); 
 
         private void OnBudgetAdded(Budget newBudget)
         {            

@@ -77,5 +77,55 @@ namespace PersonalFinanceManager.Service.Controllers
             return budgets;
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutBudget(int id, Budget budget)
+        {
+            if (id != budget.BudgetId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(budget).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BudgetExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBudget(int id)
+        {
+            var budget = await _context.Budgets.FindAsync(id);
+
+            if (budget == null)
+            {
+                return NotFound();
+            }
+
+            _context.Budgets.Remove(budget);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool BudgetExists(int id)
+        {
+            return _context.Budgets.Any(e => e.BudgetId == id);
+        }
+
     }
 }

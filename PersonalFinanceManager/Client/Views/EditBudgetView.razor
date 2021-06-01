@@ -1,0 +1,98 @@
+﻿@inherits EditBudgetComponent
+@using Shared.Models
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Budgets</h2>
+            </div>
+
+            <div class="modal-body">
+                @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewModel.ErrorMessage
+                    </div>
+                }
+
+            <div class="container" style="padding: 20px;">
+
+                @if (ViewModel.Budgets.Count > 0)
+                {
+                    <div class="row justify-content-start ml-n4">
+                        <label class="col-3 float-left">Name</label>
+                        <label class="col-2 float-left">Amount</label>
+                        <label class="col-2">Category</label>
+                    </div>
+                }
+
+                @foreach (var budget in ViewModel.Budgets)
+                {
+                    <EditForm Model="budget">
+                        <div class="row">
+                            <input type="text" class="col-3" @bind-value="@budget.Name">
+                            <input type="number" class="col-2 ml-1" min="1" step="any" @bind-value="budget.Amount" />
+
+                            <InputSelect @bind-Value="budget.NewCategoryName" class="col mx-1">
+                                @foreach (var category in ViewModel.Categories)
+                                    {
+                                    <option value="@category.Name">@category.Name</option>
+                                    }
+                            </InputSelect>
+
+                            <button type="button" class="col-1 mr-2 btn btn-primary"
+                                    @onclick="() => ViewModel.ModifyBudget(budget)">
+                                <span class="oi oi-check"></span>
+                            </button>
+                            <button type="button" class="col-1 btn btn-secondary"
+                                    @onclick="() => ViewModel.DeleteBudget(budget)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </EditForm>
+                }
+
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.OpenRequested += (s, e) => Open();
+    }
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}
