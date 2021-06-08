@@ -5,6 +5,7 @@ using ChartJs.Blazor.Common.Enums;
 using ChartJs.Blazor.Util;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -21,25 +22,28 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class HomeViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
+        private readonly CategoryManager _categoryManager;
 
-        public HomeViewModel(HttpClient apiClient)
+        public HomeViewModel(HttpClient apiClient,
+            CategoryManager categoryManager)
         {
             _apiClient = apiClient;
+            _categoryManager = categoryManager;
         }
 
         public BarConfig Config { get; set; }
 
         public Chart Chart { get; set; }
 
-        private IList<Expense> _expenses = new List<Expense>();
+        public IList<Expense> Expenses { get; set;} = new List<Expense>();
 
-        private IList<IncomeModel> _incomes = new List<IncomeModel>();
+        public IList<IncomeModel> Incomes { get; set; } = new List<IncomeModel>();
 
         public event EventHandler ChangeState;
         public async Task OnInit()
         {
-            _expenses.Clear();
-            _incomes.Clear();
+            Expenses.Clear();
+            Incomes.Clear();
 
             Config = new BarConfig
             {
@@ -62,8 +66,8 @@ namespace PersonalFinanceManager.Client.ViewModels
             {
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
                 {
-                    _expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
-                    _incomes = await _apiClient.GetFromJsonAsync<List<IncomeModel>>($"Incomes", cts.Token);
+                    Expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
+                    Incomes = await _apiClient.GetFromJsonAsync<List<IncomeModel>>($"Incomes", cts.Token);
                 }
             }
             catch (Exception ex)
@@ -72,6 +76,35 @@ namespace PersonalFinanceManager.Client.ViewModels
             }
 
             await GenerateBarChart();
+        }
+
+        public async Task DeleteIncome(IncomeModel income)
+        {
+            var result = await _apiClient.DeleteAsync($"Incomes/{income.StatementId}");
+
+            if (result.IsSuccessStatusCode)
+            {
+                Incomes.Remove(income);
+            }
+
+            await OnDeleted();
+        }
+
+        public async Task DeleteExpense(Expense expense)
+        {
+            var result = await _apiClient.DeleteAsync($"Expenses/{expense.StatementId}");
+
+            if (!result.IsSuccessStatusCode)
+                return;
+
+            Expenses.Remove(expense);
+            await OnDeleted();
+        }
+
+        private async Task OnDeleted()
+        {
+            await GenerateBarChart();
+            await _categoryManager.GetAllCategories();
         }
 
         private async Task GenerateBarChart()
@@ -97,10 +130,10 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             for (int i = 0; i < Constants.MonthsInYear; i++)
             {
-                int expenseAmount = (int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                int expenseAmount = (int)Expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
                 expenseDataSet.Add(expenseAmount);
 
-                int incomeAmount = (int)_incomes.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                int incomeAmount = (int)Incomes.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
                 incomeDataSet.Add(incomeAmount);
             }
 
@@ -110,6 +143,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             await Chart.Update();
         }
+
 
     }
 }

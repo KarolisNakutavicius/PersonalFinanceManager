@@ -32,7 +32,7 @@ namespace PersonalFinanceManager.Service.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses()
         {
-            return await _context.Expenses.Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).ToListAsync();
+            return await _context.Expenses.Include(e => e.Category).Where(e => e.UserId.Equals(_currentIdentity.GetUserId())).ToListAsync();
         }
 
         [HttpGet("categories")]
