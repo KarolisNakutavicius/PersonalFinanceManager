@@ -5,6 +5,7 @@ using ChartJs.Blazor.Common.Enums;
 using ChartJs.Blazor.Util;
 using PersonalFinanceManager.Client.Contracts;
 using PersonalFinanceManager.Client.Properties;
+using PersonalFinanceManager.Client.Services;
 using PersonalFinanceManager.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,13 @@ namespace PersonalFinanceManager.Client.ViewModels
     public class HomeViewModel : IViewModel
     {
         private readonly HttpClient _apiClient;
+        private readonly CategoryManager _categoryManager;
 
-        public HomeViewModel(HttpClient apiClient)
+        public HomeViewModel(HttpClient apiClient,
+            CategoryManager categoryManager)
         {
             _apiClient = apiClient;
+            _categoryManager = categoryManager;
         }
 
         public BarConfig Config { get; set; }
@@ -74,6 +78,35 @@ namespace PersonalFinanceManager.Client.ViewModels
             await GenerateBarChart();
         }
 
+        public async Task DeleteIncome(IncomeModel income)
+        {
+            var result = await _apiClient.DeleteAsync($"Incomes/{income.StatementId}");
+
+            if (result.IsSuccessStatusCode)
+            {
+                Incomes.Remove(income);
+            }
+
+            await OnDeleted();
+        }
+
+        public async Task DeleteExpense(Expense expense)
+        {
+            var result = await _apiClient.DeleteAsync($"Expenses/{expense.StatementId}");
+
+            if (!result.IsSuccessStatusCode)
+                return;
+
+            Expenses.Remove(expense);
+            await OnDeleted();
+        }
+
+        private async Task OnDeleted()
+        {
+            await GenerateBarChart();
+            await _categoryManager.GetAllCategories();
+        }
+
         private async Task GenerateBarChart()
         {
             Config.Data.Labels.Clear();
@@ -110,6 +143,7 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             await Chart.Update();
         }
+
 
     }
 }

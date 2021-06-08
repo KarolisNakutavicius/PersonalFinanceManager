@@ -18,12 +18,11 @@
 
 
         <div class="container"></div>
-        <div class="row mt-4">
+        <h3 class="row mt-4" style="color:green">
             Incomes
-        </div>
+        </h3>
 
-        <div class="row mt-2">
-
+        <div class="row mt-2 table-responsive" style="height:250px" >
             <table class="table">
                 <thead>
                     <tr>
@@ -37,22 +36,25 @@
                     @foreach (var statement in ViewModel.Incomes)
                     {
                     <tr>
-                        <td>@statement.Category.Name</td>
-                        <td>@statement.Amount</td>
-                        <td>@statement.DateTime.ToString("MM/dd/yyyy")</td>
-                        <td>Details</td>
+                        <td scope="row">@statement.Category.Name</td>
+                        <td scope="row">@statement.Amount</td>
+                        <td scope="row">@statement.DateTime.ToString("MM/dd/yyyy")</td>
+                        <td scope="row">Details</td>
+                        <button type="button" class="btn btn-secondary" style="margin-left:4px"
+                                @onclick="() => ViewModel.DeleteIncome(statement)">
+                            <span class="oi oi-trash"></span>
+                        </button>
                     </tr>
                     }
                 </tbody>
             </table>
         </div>
 
-        <div class="row mt-5">
+        <h3 class="row mt-5" style="color:red">
             Expenses
-        </div>
+        </h3>
 
-        <div class="row mt-3">
-
+        <div class="row mt-3 table-responsive" style="height:250px">
             <table class="table">
                 <thead>
                     <tr>
@@ -65,12 +67,16 @@
                 <tbody>
                     @foreach (var statement in ViewModel.Expenses)
                     {
-                        <tr>
-                            <td>@statement.Category.Name</td>
-                            <td>@statement.Amount</td>
-                            <td>@statement.DateTime.ToString("MM/dd/yyyy")</td>
-                            <td>Details</td>
-                        </tr>
+                    <tr>
+                        <td >@statement.Category.Name</td>
+                        <td>@statement.Amount</td>
+                        <td>@statement.DateTime.ToString("MM/dd/yyyy")</td>
+                        <td>Details</td>
+                        <button type="button" class="btn btn-secondary" style="margin-left:4px"
+                                @onclick="() => ViewModel.DeleteExpense(statement)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </tr>
                     }
                 </tbody>
             </table>
