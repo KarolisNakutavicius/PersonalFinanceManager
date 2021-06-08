@@ -62,6 +62,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public string SelectedCategory { get; set; } = string.Empty;
 
+        public string StatementDetails { get; set; } = string.Empty;
+
         [RequiredIf("IsBudget", true)]
         public string BudgetName { get; set; } = string.Empty;
 
@@ -107,7 +109,8 @@ namespace PersonalFinanceManager.Client.ViewModels
                     Name = SelectedCategory != string.Empty ?
                            SelectedCategory :
                            NewCategory
-                }
+                },
+                Details = StatementDetails
             };
 
             using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
@@ -157,6 +160,8 @@ namespace PersonalFinanceManager.Client.ViewModels
             Date = DateTime.Now;
             NewColorHex = Constants.DefaultColorHex;
             Value = 0;
+            StatementDetails = string.Empty;
+            NewCategory = string.Empty;
 
             await GetCategories();
             OnSelectionChanged();

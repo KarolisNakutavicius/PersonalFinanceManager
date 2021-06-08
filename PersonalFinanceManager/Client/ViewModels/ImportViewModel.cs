@@ -70,6 +70,7 @@ namespace PersonalFinanceManager.Client.ViewModels
                 {
                     Amount = csvStatement.Amount,
                     DateTime = csvStatement.Date,
+                    Details = csvStatement.Details
                 };
 
                 string requestUri = string.Empty;

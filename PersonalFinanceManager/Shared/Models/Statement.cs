@@ -11,6 +11,7 @@ namespace PersonalFinanceManager.Shared.Models
         public int StatementId { get; set; }
         public float Amount { get; set; }
         public DateTime DateTime { get; set; }
+        public string Details { get; set; }
 
         public int CategoryId { get; set; }
         public Category Category { get; set; }

@@ -10,15 +10,15 @@ using PersonalFinanceManager.Server.Contexts;
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
     [DbContext(typeof(FinanceManagerContext))]
-    [Migration("20210519152803_AnotherOne")]
-    partial class AnotherOne
+    [Migration("20210608123133_IdentySchema")]
+    partial class IdentySchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
+                .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("BudgetCategory", b =>
@@ -222,6 +222,9 @@ namespace PersonalFinanceManager.Service.Data.Migrations
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");

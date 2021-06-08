@@ -39,7 +39,7 @@
                         <td scope="row">@statement.Category.Name</td>
                         <td scope="row">@statement.Amount</td>
                         <td scope="row">@statement.DateTime.ToString("MM/dd/yyyy")</td>
-                        <td scope="row">Details</td>
+                        <td scope="row">@statement.Details</td>
                         <button type="button" class="btn btn-secondary" style="margin-left:4px"
                                 @onclick="() => ViewModel.DeleteIncome(statement)">
                             <span class="oi oi-trash"></span>
@@ -71,7 +71,7 @@
                         <td >@statement.Category.Name</td>
                         <td>@statement.Amount</td>
                         <td>@statement.DateTime.ToString("MM/dd/yyyy")</td>
-                        <td>Details</td>
+                        <td>@statement.Details</td>
                         <button type="button" class="btn btn-secondary" style="margin-left:4px"
                                 @onclick="() => ViewModel.DeleteExpense(statement)">
                             <span class="oi oi-trash"></span>
