@@ -31,15 +31,15 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public Chart Chart { get; set; }
 
-        private IList<Expense> _expenses = new List<Expense>();
+        public IList<Expense> Expenses { get; set;} = new List<Expense>();
 
-        private IList<IncomeModel> _incomes = new List<IncomeModel>();
+        public IList<IncomeModel> Incomes { get; set; } = new List<IncomeModel>();
 
         public event EventHandler ChangeState;
         public async Task OnInit()
         {
-            _expenses.Clear();
-            _incomes.Clear();
+            Expenses.Clear();
+            Incomes.Clear();
 
             Config = new BarConfig
             {
@@ -62,8 +62,8 @@ namespace PersonalFinanceManager.Client.ViewModels
             {
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
                 {
-                    _expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
-                    _incomes = await _apiClient.GetFromJsonAsync<List<IncomeModel>>($"Incomes", cts.Token);
+                    Expenses = await _apiClient.GetFromJsonAsync<List<Expense>>($"Expenses", cts.Token);
+                    Incomes = await _apiClient.GetFromJsonAsync<List<IncomeModel>>($"Incomes", cts.Token);
                 }
             }
             catch (Exception ex)
@@ -97,10 +97,10 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             for (int i = 0; i < Constants.MonthsInYear; i++)
             {
-                int expenseAmount = (int)_expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                int expenseAmount = (int)Expenses.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
                 expenseDataSet.Add(expenseAmount);
 
-                int incomeAmount = (int)_incomes.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
+                int incomeAmount = (int)Incomes.Where(e => e.DateTime.Month == i).Sum(e => e.Amount);
                 incomeDataSet.Add(incomeAmount);
             }
 
