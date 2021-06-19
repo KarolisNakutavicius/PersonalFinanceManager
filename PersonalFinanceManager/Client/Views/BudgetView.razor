@@ -14,7 +14,7 @@
         <div class="row mt-3">
 
             <h5 class="col-lg-1 col-3">Budget :</h5>
-            <select class="col-xl-2 col-md-3 col-6" @bind="ViewModel.SelectedBudgetName">
+            <select class="col-xl-2 col" @bind="ViewModel.SelectedBudgetName" style="max-width:200px">
                 @foreach (var budget in ViewModel.Budgets)
                 {
                     <option value="@budget.Name">@budget.Name</option>

@@ -151,7 +151,7 @@ namespace PersonalFinanceManager.Client.Abstract
                 Title = $"There are no {Type.GetDescription()} in current time frame";
                 return;
             }
-            Title = $"Your total {Type.GetDescription()} : {amount}";
+            Title = $"Your total {Type.GetDescription()} : {amount} €";
 
             this.ChangeState.Invoke(this, EventArgs.Empty);
         }

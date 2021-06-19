@@ -8,19 +8,19 @@ namespace PersonalFinanceManager.Client.Helpers.CSV.Models
     {
         public string TransactionType { get; set; }
 
-        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
-        //[FieldConverter(ConverterKind.Date, "yyyyMMdd")]
+        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        [FieldConverter(ConverterKind.Date, "yyyyMMdd")]
         public DateTime Date { get; set; }
 
         public string Time { get; set; }
 
-        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
         public float Amount { get; set; }
 
         public string Equivalent { get; set; }
 
-        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
-        //[FieldConverter(typeof(IsExpenseConverter))]
+        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        [FieldConverter(typeof(IsExpenseConverter))]
         public bool IsExpense { get; set; }
 
         public string OrigAmount { get; set; }
@@ -35,7 +35,7 @@ namespace PersonalFinanceManager.Client.Helpers.CSV.Models
 
         public string PaymentCode { get; set; }
 
-        //[FieldQuoted('"', QuoteMode.OptionalForBoth)]
+        [FieldQuoted('"', QuoteMode.OptionalForBoth)]
         public string Details { get; set; }
 
         public string BIC { get; set; }

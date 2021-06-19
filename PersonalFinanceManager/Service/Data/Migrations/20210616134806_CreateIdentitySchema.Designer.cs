@@ -10,8 +10,8 @@ using PersonalFinanceManager.Server.Contexts;
 namespace PersonalFinanceManager.Service.Data.Migrations
 {
     [DbContext(typeof(FinanceManagerContext))]
-    [Migration("20210608123133_IdentySchema")]
-    partial class IdentySchema
+    [Migration("20210616134806_CreateIdentitySchema")]
+    partial class CreateIdentitySchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
