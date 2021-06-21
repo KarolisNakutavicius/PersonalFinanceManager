@@ -40,10 +40,11 @@ namespace PersonalFinanceManager.Client.ViewModels
             _editBudgetViewModel = editBudgetViewModel;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
-            _editBudgetViewModel.BudgetModified += (s, e) => _ = OnInit();
+            _editBudgetViewModel.BudgetModified += (s, e) => _ = RetrieveBudgets();
         }
 
-        public BarConfig Config { get; set; }
+        public BarConfig Config { get; set; } 
+
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
 
@@ -63,9 +64,14 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task OnInit()
         {
-            Budgets.Clear();
-            InitializeBarConfig();
+            InitBarConfig();
+            await RetrieveBudgets();
+        }
 
+        public async Task RetrieveBudgets()
+        {
+            Budgets.Clear();
+          
             try
             {
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
@@ -80,6 +86,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             await GetSelectedExpenses();
         }
+
+        
 
         private async Task GetSelectedExpenses()
         {
@@ -166,6 +174,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             Config.Data.Datasets.Add(budgetSet);
             Config.Data.Datasets.Add(overSpentSet);
 
+            this.ChangeState?.Invoke(this, EventArgs.Empty);
             await Chart.Update();
         }
 
@@ -183,7 +192,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             _ = GetSelectedExpenses();
         }
 
-        private void InitializeBarConfig()
+        private void InitBarConfig()
         {
             Config = new BarConfig
             {
@@ -223,6 +232,6 @@ namespace PersonalFinanceManager.Client.ViewModels
                 }
             };
         }
-        
+
     }
 }
