@@ -43,7 +43,44 @@ namespace PersonalFinanceManager.Client.ViewModels
             _editBudgetViewModel.BudgetModified += (s, e) => _ = OnInit();
         }
 
-        public BarConfig Config { get; set; }
+        public BarConfig Config { get; set; } = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Legend = new Legend
+                {
+                    Position = Position.Top
+                },
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                    Text = "Budget"
+                },
+                Tooltips = new Tooltips
+                {
+                    Enabled = false
+                },
+                Scales = new BarScales
+                {
+                    XAxes = new List<CartesianAxis>
+                        {
+                            new BarCategoryAxis
+                            {
+                                Stacked = true
+                            }
+                        },
+                    YAxes = new List<CartesianAxis>
+                        {
+                            new BarLinearCartesianAxis
+                            {
+                                Stacked = true
+                            }
+                        }
+                }
+            }
+        };
+
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
 
@@ -64,7 +101,6 @@ namespace PersonalFinanceManager.Client.ViewModels
         public async Task OnInit()
         {
             Budgets.Clear();
-            InitializeBarConfig();
 
             try
             {
@@ -166,6 +202,7 @@ namespace PersonalFinanceManager.Client.ViewModels
             Config.Data.Datasets.Add(budgetSet);
             Config.Data.Datasets.Add(overSpentSet);
 
+            this.ChangeState?.Invoke(this, EventArgs.Empty);
             await Chart.Update();
         }
 
@@ -181,47 +218,6 @@ namespace PersonalFinanceManager.Client.ViewModels
             Title = "Your selected budgets";
             this.ChangeState.Invoke(this, EventArgs.Empty);
             _ = GetSelectedExpenses();
-        }
-
-        private void InitializeBarConfig()
-        {
-            Config = new BarConfig
-            {
-                Options = new BarOptions
-                {
-                    Responsive = true,
-                    Legend = new Legend
-                    {
-                        Position = Position.Top
-                    },
-                    Title = new OptionsTitle
-                    {
-                        Display = false,
-                        Text = "Budget"
-                    },
-                    Tooltips = new Tooltips
-                    {
-                        Enabled = false
-                    },
-                    Scales = new BarScales
-                    {
-                        XAxes = new List<CartesianAxis>
-                        {
-                            new BarCategoryAxis
-                            {
-                                Stacked = true
-                            }
-                        },
-                        YAxes = new List<CartesianAxis>
-                        {
-                            new BarLinearCartesianAxis
-                            {
-                                Stacked = true
-                            }
-                        }
-                    }
-                }
-            };
         }
         
     }

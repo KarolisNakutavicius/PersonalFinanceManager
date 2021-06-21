@@ -85,7 +85,8 @@ namespace PersonalFinanceManager.Service.Controllers
                 return BadRequest();
             }
 
-            var currentBudget = await _context.Budgets.Include(c => c.Categories).SingleAsync(b => b.BudgetId == id);
+            var currentBudget = await _context.Budgets.Include(c => c.Categories)
+                .SingleAsync(b => b.BudgetId == id);
             var currentCategory = currentBudget.Categories.FirstOrDefault();
 
             if (currentCategory == null)
