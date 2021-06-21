@@ -25,7 +25,7 @@ namespace PersonalFinanceManager.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<FinanceManagerContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<FinanceManagerContext>(opt => opt.UseInMemoryDatabase("FinanceManagerDB"));
 
             services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<FinanceManagerContext>();
