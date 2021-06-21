@@ -94,7 +94,7 @@ namespace PersonalFinanceManager.Service.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
-            int updatedCategoryId = budget.Categories.Single().CategoryId;
+            int updatedCategoryId = budget.Categories.First().CategoryId;
 
             if (currentCategory.CategoryId != updatedCategoryId)
             {

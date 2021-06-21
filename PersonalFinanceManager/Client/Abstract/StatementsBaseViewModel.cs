@@ -153,7 +153,7 @@ namespace PersonalFinanceManager.Client.Abstract
             }
             Title = $"Your total {Type.GetDescription()} : {amount} €";
 
-            this.ChangeState.Invoke(this, EventArgs.Empty);
+            this.ChangeState?.Invoke(this, EventArgs.Empty);
         }
 
     }
