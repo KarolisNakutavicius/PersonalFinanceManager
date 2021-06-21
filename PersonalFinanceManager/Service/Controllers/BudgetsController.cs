@@ -85,7 +85,26 @@ namespace PersonalFinanceManager.Service.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(budget).State = EntityState.Modified;
+            var currentBudget = await _context.Budgets.Include(c => c.Categories).SingleAsync(b => b.BudgetId == id);
+            var currentCategory = currentBudget.Categories.FirstOrDefault();
+
+            if (currentCategory == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+            int updatedCategoryId = budget.Categories.Single().CategoryId;
+
+            if (currentCategory.CategoryId != updatedCategoryId)
+            {
+                // change references
+                var newCategory = _context.Categories.Find(updatedCategoryId);
+                currentBudget.Categories.Remove(currentCategory);
+                currentBudget.Categories.Add(newCategory);
+            }
+
+            currentBudget.Name = budget.Name;
+            currentBudget.Amount = budget.Amount;
 
             try
             {
