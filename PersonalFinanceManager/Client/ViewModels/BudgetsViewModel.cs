@@ -40,46 +40,10 @@ namespace PersonalFinanceManager.Client.ViewModels
             _editBudgetViewModel = editBudgetViewModel;
 
             _addViewModel.OnBudgetAdded = OnBudgetAdded;
-            _editBudgetViewModel.BudgetModified += (s, e) => _ = OnInit();
+            _editBudgetViewModel.BudgetModified += (s, e) => _ = RetrieveBudgets();
         }
 
-        public BarConfig Config { get; set; } = new BarConfig
-        {
-            Options = new BarOptions
-            {
-                Responsive = true,
-                Legend = new Legend
-                {
-                    Position = Position.Top
-                },
-                Title = new OptionsTitle
-                {
-                    Display = false,
-                    Text = "Budget"
-                },
-                Tooltips = new Tooltips
-                {
-                    Enabled = false
-                },
-                Scales = new BarScales
-                {
-                    XAxes = new List<CartesianAxis>
-                        {
-                            new BarCategoryAxis
-                            {
-                                Stacked = true
-                            }
-                        },
-                    YAxes = new List<CartesianAxis>
-                        {
-                            new BarLinearCartesianAxis
-                            {
-                                Stacked = true
-                            }
-                        }
-                }
-            }
-        };
+        public BarConfig Config { get; set; } 
 
         public Chart Chart { get; set; }
         public List<Budget> Budgets { get; set; } = new List<Budget>();
@@ -100,8 +64,14 @@ namespace PersonalFinanceManager.Client.ViewModels
 
         public async Task OnInit()
         {
-            Budgets.Clear();
+            InitBarConfig();
+            await RetrieveBudgets();
+        }
 
+        public async Task RetrieveBudgets()
+        {
+            Budgets.Clear();
+          
             try
             {
                 using (var cts = new CancellationTokenSource(Constants.ApiTimeOut))
@@ -116,6 +86,8 @@ namespace PersonalFinanceManager.Client.ViewModels
 
             await GetSelectedExpenses();
         }
+
+        
 
         private async Task GetSelectedExpenses()
         {
@@ -219,6 +191,47 @@ namespace PersonalFinanceManager.Client.ViewModels
             this.ChangeState.Invoke(this, EventArgs.Empty);
             _ = GetSelectedExpenses();
         }
-        
+
+        private void InitBarConfig()
+        {
+            Config = new BarConfig
+            {
+                Options = new BarOptions
+                {
+                    Responsive = true,
+                    Legend = new Legend
+                    {
+                        Position = Position.Top
+                    },
+                    Title = new OptionsTitle
+                    {
+                        Display = false,
+                        Text = "Budget"
+                    },
+                    Tooltips = new Tooltips
+                    {
+                        Enabled = false
+                    },
+                    Scales = new BarScales
+                    {
+                        XAxes = new List<CartesianAxis>
+                        {
+                            new BarCategoryAxis
+                            {
+                                Stacked = true
+                            }
+                        },
+                        YAxes = new List<CartesianAxis>
+                        {
+                            new BarLinearCartesianAxis
+                            {
+                                Stacked = true
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
     }
 }
